@@ -101,6 +101,61 @@ switch ($action) {
             }
         }
         break;
+
+    case 'update_item':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['inventory_id'];
+            $name = $_POST['name'];
+            $description = $_POST['description'];
+            $quantity = $_POST['quantity'];
+            $unit_price = $_POST['unit_price'];
+            $reorder_level = $_POST['reorder_level'];
+            $supplier_id = $_POST['supplier_id'];
+
+            try {
+                $stmt = $pdo->prepare("UPDATE inventory_items SET name=?, description=?, quantity=?, unit_price=?, reorder_level=?, supplier_id=? WHERE inventory_id=?");
+                $stmt->execute([$name, $description, $quantity, $unit_price, $reorder_level, $supplier_id, $id]);
+                echo json_encode(['status' => 'success', 'message' => 'Item updated successfully']);
+            } catch (Exception $e) {
+                echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+            }
+        }
+        break;
+
+    case 'delete_item':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['inventory_id'];
+            try {
+                $stmt = $pdo->prepare("DELETE FROM inventory_items WHERE inventory_id=?");
+                $stmt->execute([$id]);
+                echo json_encode(['status' => 'success', 'message' => 'Item deleted successfully']);
+            } catch (PDOException $e) {
+                // Error 23000 is a Foreign Key Constraint violation
+                if ($e->getCode() == '23000') {
+                    echo json_encode(['status' => 'error', 'message' => 'Cannot delete: This item is part of an existing Purchase Order.']);
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => 'Failed to delete: ' . $e->getMessage()]);
+                }
+            }
+        }
+        break;
+
+    case 'issue_item':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['inventory_id'];
+            $issue_qty = (int)$_POST['issue_qty'];
+
+            try {
+                // Subtracts the quantity, but prevents it from dropping below 0
+                $stmt = $pdo->prepare("UPDATE inventory_items SET quantity = GREATEST(0, quantity - ?) WHERE inventory_id = ?");
+                $stmt->execute([$issue_qty, $id]);
+                
+                echo json_encode(['status' => 'success', 'message' => "Successfully issued $issue_qty item(s)."]);
+            } catch (Exception $e) {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to issue item: ' . $e->getMessage()]);
+            }
+        }
+        break;
     
     case 'get_pos':
         // Fetch all purchase orders and the associated supplier
@@ -156,6 +211,7 @@ switch ($action) {
 
                 // Ensure we actually updated something (prevents double-receiving)
                 if ($stmt->rowCount() > 0) {
+                    
                     // 2. Get the items from this PO
                     $stmtItems = $pdo->prepare("SELECT inventory_id, quantity FROM purchase_items WHERE po_id = ?");
                     $stmtItems->execute([$po_id]);
@@ -167,8 +223,23 @@ switch ($action) {
                         $updateStock->execute([$item['quantity'], $item['inventory_id']]);
                     }
 
+                    // 4. 🔥 FINANCE INTEGRATION: Generate Vendor Payment (Invoice) 🔥
+                    // Fetch the supplier and total amount from the PO
+                    $stmtPo = $pdo->prepare("SELECT supplier_id, total_amount FROM purchase_orders WHERE po_id = ?");
+                    $stmtPo->execute([$po_id]);
+                    $poData = $stmtPo->fetch();
+
+                    // Insert the invoice into the Finance team's vendor_payments table
+                    $stmtFinance = $pdo->prepare("INSERT INTO vendor_payments (supplier_id, po_id, pay_date, amount) VALUES (?, ?, ?, ?)");
+                    $stmtFinance->execute([
+                        $poData['supplier_id'], 
+                        $po_id, 
+                        date('Y-m-d'), // Logs today as the invoice date
+                        $poData['total_amount']
+                    ]);
+
                     $pdo->commit();
-                    echo json_encode(['status' => 'success', 'message' => 'PO Received! Inventory stock has been updated.']);
+                    echo json_encode(['status' => 'success', 'message' => 'PO Received! Stock updated & Finance invoiced.']);
                 } else {
                     $pdo->rollBack();
                     echo json_encode(['status' => 'error', 'message' => 'PO already received or not found.']);
@@ -181,35 +252,57 @@ switch ($action) {
         break;
 
     case 'get_analytics':
-        // 1. Total Inventory Value & Item Count
+        // 1. Stock Valuations & Item Count
         $stmt1 = $pdo->query("SELECT SUM(quantity * unit_price) as total_value, COUNT(inventory_id) as total_items FROM inventory_items");
-        $inventory_stats = $stmt1->fetch();
+        $inv_stats = $stmt1->fetch();
 
-        // 2. Low Stock Alerts Count
-        $stmt2 = $pdo->query("SELECT COUNT(inventory_id) as low_stock_count FROM inventory_items WHERE quantity <= reorder_level");
-        $low_stock = $stmt2->fetch();
+        // 2. Identify Shortages (Low Stock)
+        $stmt2 = $pdo->query("SELECT COUNT(inventory_id) as low_stock FROM inventory_items WHERE quantity <= reorder_level");
+        $shortages = $stmt2->fetch();
 
-        // 3. Total Spend on Received POs
-        $stmt3 = $pdo->query("SELECT SUM(total_amount) as total_spend FROM purchase_orders WHERE status = 'Received'");
-        $po_stats = $stmt3->fetch();
+        // 3. Identify Overstock (If current stock is 3x higher than the reorder level)
+        $stmt3 = $pdo->query("SELECT COUNT(inventory_id) as overstock FROM inventory_items WHERE quantity > (reorder_level * 3) AND reorder_level > 0");
+        $overstock = $stmt3->fetch();
 
-        // 4. Inventory Valuation Grouped by Supplier (for the Chart)
-        $stmt4 = $pdo->query("
+        // 4. Total Spend
+        $stmt4 = $pdo->query("SELECT SUM(total_amount) as total_spend FROM purchase_orders WHERE status = 'Received'");
+        $po_stats = $stmt4->fetch();
+
+        // 5. Inventory Turnover Ratio (Approx: Total Received PO Spend / Current Inventory Value)
+        $total_value = $inv_stats['total_value'] ?? 0;
+        $total_spend = $po_stats['total_spend'] ?? 0;
+        $turnover_ratio = ($total_value > 0) ? ($total_spend / $total_value) : 0;
+
+        // 6. Spend by Category (Using Supplier as the Category constraint)
+        $stmt5 = $pdo->query("
+            SELECT s.name as category_name, SUM(po.total_amount) as category_spend 
+            FROM purchase_orders po 
+            JOIN suppliers s ON po.supplier_id = s.supplier_id 
+            WHERE po.status = 'Received'
+            GROUP BY s.supplier_id
+        ");
+        $spend_by_category = $stmt5->fetchAll();
+
+        // 7. Valuation by Supplier (Existing Bar Chart)
+        $stmt6 = $pdo->query("
             SELECT s.name as supplier_name, SUM(i.quantity * i.unit_price) as supplier_value 
             FROM inventory_items i 
             JOIN suppliers s ON i.supplier_id = s.supplier_id 
             GROUP BY s.supplier_id
         ");
-        $chart_data = $stmt4->fetchAll();
+        $valuation_data = $stmt6->fetchAll();
 
         echo json_encode([
             'status' => 'success', 
             'data' => [
-                'total_value' => $inventory_stats['total_value'] ?? 0,
-                'total_items' => $inventory_stats['total_items'] ?? 0,
-                'low_stock_count' => $low_stock['low_stock_count'] ?? 0,
-                'total_spend' => $po_stats['total_spend'] ?? 0,
-                'chart_data' => $chart_data
+                'total_value' => $total_value,
+                'total_items' => $inv_stats['total_items'] ?? 0,
+                'low_stock' => $shortages['low_stock'] ?? 0,
+                'overstock' => $overstock['overstock'] ?? 0,
+                'total_spend' => $total_spend,
+                'turnover_ratio' => round($turnover_ratio, 2),
+                'spend_by_category' => $spend_by_category,
+                'valuation_data' => $valuation_data
             ]
         ]);
         break;

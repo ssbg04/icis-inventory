@@ -1,257 +1,599 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Inventory System</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICIS Inventory System</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .card-custom {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
-        }
-        .table-custom th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            color: #6c757d;
-        }
-        .table-custom td {
-            vertical-align: middle;
-        }
-        /* Login Screen Centering */
-        #loginSection {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-        }
-        /* Navbar */
-        .navbar-custom {
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8f9fa;
+      }
+      .card-custom {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+      }
+      .table-custom th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+      }
+      .table-custom td {
+        vertical-align: middle;
+      }
+      /* Login Screen Centering */
+      #loginSection {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .login-card {
+        width: 100%;
+        max-width: 400px;
+      }
+      /* Navbar */
+      .navbar-custom {
+        background-color: #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      }
     </style>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <div id="loginSection" style="display: none;">
-        <div class="card card-custom login-card p-4">
-            <div class="card-body">
-                <div class="text-center mb-4">
-                    <i class="bi bi-box-seam text-primary" style="font-size: 3rem;"></i>
-                    <h4 class="mt-2 fw-bold">Inventory System</h4>
-                    <p class="text-muted small">Please sign in to continue</p>
-                </div>
-                
-                <div id="loginAlert"></div>
+  </head>
+  <body>
+    <div id="loginSection" style="display: none">
+      <div class="card card-custom login-card p-4">
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <i class="bi bi-box-seam text-primary" style="font-size: 3rem"></i>
+            <h4 class="mt-2 fw-bold">Inventory System</h4>
+            <p class="text-muted small">Please sign in to continue</p>
+          </div>
 
-                <form id="loginForm">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small fw-semibold">USERNAME</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person"></i></span>
-                            <input type="text" name="username" class="form-control border-start-0 bg-light" required>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label text-muted small fw-semibold">PASSWORD</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock"></i></span>
-                            <input type="password" name="password" class="form-control border-start-0 bg-light" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3">Sign In</button>
-                </form>
+          <div id="loginAlert"></div>
+
+          <form id="loginForm">
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold"
+                >USERNAME</label
+              >
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"
+                  ><i class="bi bi-person"></i
+                ></span>
+                <input
+                  type="text"
+                  name="username"
+                  class="form-control border-start-0 bg-light"
+                  required
+                />
+              </div>
             </div>
+            <div class="mb-4">
+              <label class="form-label text-muted small fw-semibold"
+                >PASSWORD</label
+              >
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"
+                  ><i class="bi bi-lock"></i
+                ></span>
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control border-start-0 bg-light"
+                  required
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary w-100 py-2 fw-semibold rounded-3"
+            >
+              Sign In
+            </button>
+          </form>
         </div>
+      </div>
     </div>
 
-    <div id="dashboardSection" style="display: none;">
-        
-        <nav class="navbar navbar-expand-lg navbar-custom py-3 mb-4">
-            <div class="container">
-                <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
-                    <i class="bi bi-box-seam text-primary"></i> Inventory Pro
-                </a>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="text-muted"><i class="bi bi-person-circle"></i> <span id="currentUser"></span></span>
-                    <button id="logoutBtn" class="btn btn-sm btn-outline-danger rounded-pill px-3">Logout</button>
-                </div>
-            </div>
-        </nav>
-
+    <div id="dashboardSection" style="display: none">
+      <nav class="navbar navbar-expand-lg navbar-custom py-3 mb-4">
         <div class="container">
-            <div id="alertBox"></div>
-
-            <ul class="nav nav-pills mb-4" id="dashboardTabs">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#" id="tab-inventory" onclick="switchTab('inventory')">Inventory View</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="tab-po" onclick="switchTab('po')">Purchase Orders</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" id="tab-analytics" onclick="switchTab('analytics')"><i class="bi bi-graph-up"></i> Reports & Analytics</a>
-                </li>
-            </ul>
-
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold mb-0">Overview</h4>
-                <button class="btn btn-primary shadow-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addItemModal">
-                    <i class="bi bi-plus-lg"></i> Add Item
-                </button>
-            </div>
-
-            <div id="inventoryContainer">
-
-                <div class="card card-custom">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-custom mb-0">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th class="ps-4">Item Details</th>
-                                        <th>Supplier</th>
-                                        <th>Unit Price</th>
-                                        <th>Stock Level</th>
-                                        <th class="pe-4 text-end">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="inventoryTableBody">
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card card-custom" id="poContainer" style="display: none;">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                    <h5 class="mb-0 fw-bold">Recent Purchase Orders</h5>
-                    <button class="btn btn-primary shadow-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#createPOModal">
-                        <i class="bi bi-cart-plus"></i> Create PO
-                    </button>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover table-custom mb-0">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th class="ps-4">PO #</th>
-                                    <th>Date</th>
-                                    <th>Supplier</th>
-                                    <th>Total Amount</th>
-                                    <th>Status</th>
-                                    <th class="pe-4 text-end">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="poTableBody">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+          <a
+            class="navbar-brand fw-bold d-flex align-items-center gap-2"
+            href="#"
+          >
+            <i class="bi bi-box-seam text-primary"></i> Inventory Pro
+          </a>
+          <div class="d-flex align-items-center gap-3">
+            <span class="text-muted"
+              ><i class="bi bi-person-circle"></i> <span id="currentUser"></span
+            ></span>
+            <button
+              id="logoutBtn"
+              class="btn btn-sm btn-outline-danger rounded-pill px-3"
+            >
+              Logout
+            </button>
+          </div>
         </div>
-    </div>
+      </nav>
 
-    <div class="card card-custom" id="poContainer" style="display: none;">
-                </div>
+      <div class="container">
+        <div id="alertBox"></div>
 
-            <div id="analyticsContainer" style="display: none;">
-                
-                <div class="row mb-4">
-                    <div class="col-md-3">
-                        <div class="card card-custom border-0 shadow-sm p-3 text-center h-100">
-                            <div class="text-muted small fw-bold mb-1">TOTAL INVENTORY VALUE</div>
-                            <h3 id="statTotalValue" class="fw-bold text-primary mb-0">$0.00</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card card-custom border-0 shadow-sm p-3 text-center h-100">
-                            <div class="text-muted small fw-bold mb-1">TOTAL ITEMS</div>
-                            <h3 id="statTotalItems" class="fw-bold text-dark mb-0">0</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card card-custom border-0 shadow-sm p-3 text-center h-100">
-                            <div class="text-muted small fw-bold mb-1">LOW STOCK ALERTS</div>
-                            <h3 id="statLowStock" class="fw-bold text-danger mb-0">0</h3>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card card-custom border-0 shadow-sm p-3 text-center h-100">
-                            <div class="text-muted small fw-bold mb-1">RECEIVED PO SPEND</div>
-                            <h3 id="statTotalSpend" class="fw-bold text-success mb-0">$0.00</h3>
-                        </div>
-                    </div>
-                </div>
+        <ul class="nav nav-pills mb-4" id="dashboardTabs">
+          <li class="nav-item">
+            <a
+              class="nav-link active"
+              href="#"
+              id="tab-inventory"
+              onclick="switchTab('inventory')"
+              >Inventory View</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" id="tab-po" onclick="switchTab('po')"
+              >Purchase Orders</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="#"
+              id="tab-analytics"
+              onclick="switchTab('analytics')"
+              ><i class="bi bi-graph-up"></i> Reports & Analytics</a
+            >
+          </li>
+        </ul>
 
-                <div class="card card-custom border-0 shadow-sm p-4">
-                    <h5 class="fw-bold mb-4">Stock Valuation by Supplier</h5>
-                    <canvas id="valuationChart" height="100"></canvas>
-                </div>
+        <div id="inventoryContainer">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">Overview</h4>
+            <button
+              class="btn btn-primary shadow-sm rounded-pill px-4"
+              data-bs-toggle="modal"
+              data-bs-target="#addItemModal"
+            >
+              <i class="bi bi-plus-lg"></i> Add Item
+            </button>
+          </div>
+
+          <div class="card card-custom">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover table-custom mb-0">
+                  <thead class="bg-light">
+                    <tr>
+                      <th class="ps-4">Item Details</th>
+                      <th>Supplier</th>
+                      <th>Unit Price</th>
+                      <th>Stock Level</th>
+                      <th class="pe-4 text-end">Status</th>
+                      <th class="pe-4 text-end">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="inventoryTableBody"></tbody>
+                </table>
+              </div>
             </div>
+          </div>
+        </div>
+
+        <div class="card card-custom" id="poContainer" style="display: none">
+          <div
+            class="card-header bg-white d-flex justify-content-between align-items-center py-3"
+          >
+            <h5 class="mb-0 fw-bold">Recent Purchase Orders</h5>
+            <button
+              class="btn btn-primary shadow-sm rounded-pill px-4"
+              data-bs-toggle="modal"
+              data-bs-target="#createPOModal"
+            >
+              <i class="bi bi-cart-plus"></i> Create PO
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover table-custom mb-0">
+                <thead class="bg-light">
+                  <tr>
+                    <th class="ps-4">PO #</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Total Amount</th>
+                    <th>Status</th>
+                    <th class="pe-4 text-end">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="poTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="analyticsContainer" style="display: none">
+          <div class="card card-custom">
+            <div
+              class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-3 px-4"
+            >
+              <h5 class="mb-0 fw-bold">Dashboard Overview</h5>
+              <button
+                class="btn btn-sm btn-outline-primary shadow-sm rounded-pill px-3"
+                onclick="loadAnalytics(this)"
+              >
+                <i class="bi bi-arrow-clockwise"></i> Refresh Data
+              </button>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="row g-4 mb-4">
+                <div class="col-12 col-md-4">
+                  <div
+                    class="card bg-light border-0 shadow-none p-4 text-center h-100 rounded-3"
+                  >
+                    <div class="text-muted small fw-bold mb-2">
+                      STOCK VALUATION
+                    </div>
+                    <h3 id="statTotalValue" class="fw-bold text-primary mb-0">
+                      ₱0.00
+                    </h3>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div
+                    class="card bg-light border-0 shadow-none p-4 text-center h-100 rounded-3"
+                  >
+                    <div class="text-muted small fw-bold mb-2">
+                      TOTAL PO SPEND
+                    </div>
+                    <h3 id="statTotalSpend" class="fw-bold text-success mb-0">
+                      ₱0.00
+                    </h3>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div
+                    class="card bg-light border-0 shadow-none p-4 text-center h-100 rounded-3"
+                  >
+                    <div class="text-muted small fw-bold mb-2">
+                      INVENTORY TURNOVER
+                    </div>
+                    <h3 id="statTurnover" class="fw-bold text-dark mb-0">
+                      0.00
+                    </h3>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-4 mb-5">
+                <div class="col-12 col-md-4">
+                  <div
+                    class="card bg-light border-0 shadow-none p-4 text-center h-100 rounded-3"
+                  >
+                    <div class="text-muted small fw-bold mb-2">TOTAL ITEMS</div>
+                    <h3 id="statTotalItems" class="fw-bold text-dark mb-0">
+                      0
+                    </h3>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div
+                    class="card bg-danger bg-opacity-10 border-0 shadow-none p-4 text-center h-100 rounded-3"
+                  >
+                    <div class="text-danger small fw-bold mb-2">
+                      SHORTAGES (LOW STOCK)
+                    </div>
+                    <h3 id="statLowStock" class="fw-bold text-danger mb-0">
+                      0
+                    </h3>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div
+                    class="card bg-warning bg-opacity-10 border-0 shadow-none p-4 text-center h-100 rounded-3"
+                  >
+                    <div class="text-warning small fw-bold mb-2">
+                      OVERSTOCK ALERTS
+                    </div>
+                    <h3 id="statOverstock" class="fw-bold text-warning mb-0">
+                      0
+                    </h3>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                  <h6
+                    class="fw-bold mb-4 text-secondary text-uppercase"
+                    style="letter-spacing: 0.5px"
+                  >
+                    Stock Valuation by Supplier
+                  </h6>
+                  <div style="position: relative; height: 35vh; width: 100%">
+                    <canvas id="valuationChart"></canvas>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                  <h6
+                    class="fw-bold mb-4 text-secondary text-uppercase"
+                    style="letter-spacing: 0.5px"
+                  >
+                    Spend by Category (Supplier)
+                  </h6>
+                  <div style="position: relative; height: 35vh; width: 100%">
+                    <canvas id="spendChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="modal fade" id="addItemModal" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
           <form id="addItemForm">
-              <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold">Add New Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header border-bottom-0 pb-0">
+              <h5 class="modal-title fw-bold">Add New Item</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Item Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control bg-light border-0"
+                  required
+                />
               </div>
-              <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Item Name</label>
-                        <input type="text" name="name" class="form-control bg-light border-0" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Description</label>
-                        <textarea name="description" class="form-control bg-light border-0" rows="2"></textarea>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label text-muted small">Initial Qty</label>
-                            <input type="number" name="quantity" class="form-control bg-light border-0" value="0">
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label text-muted small">Price (₱)</label>
-                            <input type="number" step="0.01" name="unit_price" class="form-control bg-light border-0" required>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label text-muted small">Reorder At</label>
-                            <input type="number" name="reorder_level" class="form-control bg-light border-0" value="10">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Supplier</label>
-                        <select name="supplier_id" id="supplierSelect" class="form-select bg-light border-0" required>
-                            <option value="">Select...</option>
-                            </select>
-                    </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small"
+                  >Description (Include Location / Serial No. for
+                  Equipment)</label
+                >
+                <textarea
+                  name="description"
+                  class="form-control bg-light border-0"
+                  rows="2"
+                  placeholder="e.g., Stored in Science Lab 302. Serial: #XYZ123"
+                ></textarea>
               </div>
-              <div class="modal-footer border-top-0 pt-0">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary px-4">Save Item</button>
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label class="form-label text-muted small">Initial Qty</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    class="form-control bg-light border-0"
+                    value="0"
+                  />
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label text-muted small">Price (₱)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="unit_price"
+                    class="form-control bg-light border-0"
+                    required
+                  />
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label text-muted small">Reorder At</label>
+                  <input
+                    type="number"
+                    name="reorder_level"
+                    class="form-control bg-light border-0"
+                    value="10"
+                  />
+                </div>
               </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Supplier</label>
+                <select
+                  name="supplier_id"
+                  id="supplierSelect"
+                  class="form-select bg-light border-0"
+                  required
+                >
+                  <option value="">Select...</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+              <button
+                type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary px-4">
+                Save Item
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="editItemModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <form id="editItemForm">
+            <input type="hidden" name="inventory_id" id="edit_inventory_id" />
+            <div class="modal-header border-bottom-0 pb-0">
+              <h5 class="modal-title fw-bold">Edit Item</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Item Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  id="edit_name"
+                  class="form-control bg-light border-0"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small"
+                  >Description (Include Location / Serial No. for
+                  Equipment)</label
+                >
+                <textarea
+                  name="description"
+                  class="form-control bg-light border-0"
+                  rows="2"
+                  placeholder="e.g., Stored in Science Lab 302. Serial: #XYZ123"
+                ></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label class="form-label text-muted small">Stock Qty</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    id="edit_quantity"
+                    class="form-control bg-light border-0"
+                    required
+                  />
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label text-muted small">Price ($)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="unit_price"
+                    id="edit_unit_price"
+                    class="form-control bg-light border-0"
+                    required
+                  />
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label text-muted small">Reorder At</label>
+                  <input
+                    type="number"
+                    name="reorder_level"
+                    id="edit_reorder_level"
+                    class="form-control bg-light border-0"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Supplier</label>
+                <select
+                  name="supplier_id"
+                  id="edit_supplier_id"
+                  class="form-select bg-light border-0"
+                  required
+                ></select>
+              </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+              <button
+                type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary px-4">
+                Update Item
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="issueItemModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content border-0 shadow">
+          <form id="issueItemForm">
+            <input type="hidden" name="inventory_id" id="issue_inventory_id" />
+            <div class="modal-header border-bottom-0 pb-0">
+              <h5 class="modal-title fw-bold text-warning">
+                <i class="bi bi-box-arrow-up"></i> Issue Item
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p class="small text-muted mb-3">
+                Dispense
+                <strong id="issue_item_name" class="text-dark"></strong> from
+                inventory.
+              </p>
+              <div class="mb-3">
+                <label class="form-label text-muted small"
+                  >Quantity to Issue</label
+                >
+                <input
+                  type="number"
+                  name="issue_qty"
+                  id="issue_qty"
+                  class="form-control bg-light border-0"
+                  value="1"
+                  min="1"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+              <button
+                type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn btn-warning px-4 text-white fw-medium"
+              >
+                Confirm Issue
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -261,225 +603,299 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
           <form id="createPOForm">
-              <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold">Create Purchase Order</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header border-bottom-0 pb-0">
+              <h5 class="modal-title fw-bold">Create Purchase Order</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label text-muted small">Supplier</label>
+                <select
+                  name="supplier_id"
+                  id="poSupplierSelect"
+                  class="form-select bg-light border-0"
+                  required
+                >
+                  <option value="">Select a Supplier...</option>
+                </select>
               </div>
-              <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Supplier</label>
-                        <select name="supplier_id" id="poSupplierSelect" class="form-select bg-light border-0" required>
-                            <option value="">Select a Supplier...</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Item to Order</label>
-                        <select name="inventory_id" id="poItemSelect" class="form-select bg-light border-0" required>
-                            <option value="">Select an Item...</option>
-                        </select>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label text-muted small">Order Qty</label>
-                            <input type="number" name="quantity" class="form-control bg-light border-0" value="1" min="1" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label text-muted small">Unit Price (₱)</label>
-                            <input type="number" step="0.01" name="unit_price" class="form-control bg-light border-0" required>
-                        </div>
-                    </div>
+              <div class="mb-3">
+                <label class="form-label text-muted small">Item to Order</label>
+                <select
+                  name="inventory_id"
+                  id="poItemSelect"
+                  class="form-select bg-light border-0"
+                  required
+                >
+                  <option value="">Select an Item...</option>
+                </select>
               </div>
-              <div class="modal-footer border-top-0 pt-0">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary px-4">Generate PO</button>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-muted small">Order Qty</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    class="form-control bg-light border-0"
+                    value="1"
+                    min="1"
+                    required
+                  />
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-muted small"
+                    >Unit Price (₱)</label
+                  >
+                  <input
+                    type="number"
+                    step="0.01"
+                    name="unit_price"
+                    class="form-control bg-light border-0"
+                    required
+                  />
+                </div>
               </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+              <button
+                type="button"
+                class="btn btn-light"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary px-4">
+                Generate PO
+              </button>
+            </div>
           </form>
         </div>
       </div>
     </div>
 
     <script>
-    $(document).ready(function() {
-        
+      $(document).ready(function () {
         // 1. App Initialization & Authentication Check
         checkAuth();
 
         function checkAuth() {
-            $.ajax({
-                url: 'api.php?action=check_auth',
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        // Logged in
-                        $('#currentUser').text(res.username);
-                        $('#loginSection').hide();
-                        $('#dashboardSection').fadeIn();
-                        loadInventory();
-                        loadSuppliers();
-                    } else {
-                        // Not logged in
-                        $('#dashboardSection').hide();
-                        $('#loginSection').fadeIn();
-                    }
-                }
-            });
+          $.ajax({
+            url: "api.php?action=check_auth",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+              if (res.status === "success") {
+                // Logged in
+                $("#currentUser").text(res.username);
+                $("#loginSection").hide();
+                $("#dashboardSection").fadeIn();
+                loadInventory();
+                loadSuppliers();
+              } else {
+                // Not logged in
+                $("#dashboardSection").hide();
+                $("#loginSection").fadeIn();
+              }
+            },
+          });
         }
 
         // 2. Login Handling
-        $('#loginForm').submit(function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: 'api.php?action=login',
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        $('#loginForm')[0].reset();
-                        $('#loginAlert').empty();
-                        checkAuth(); // Reload state
-                    } else {
-                        $('#loginAlert').html(`<div class="alert alert-danger py-2 small">${res.message}</div>`);
-                    }
-                }
-            });
+        $("#loginForm").submit(function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: "api.php?action=login",
+            type: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (res) {
+              if (res.status === "success") {
+                $("#loginForm")[0].reset();
+                $("#loginAlert").empty();
+                checkAuth(); // Reload state
+              } else {
+                $("#loginAlert").html(
+                  `<div class="alert alert-danger py-2 small">${res.message}</div>`,
+                );
+              }
+            },
+          });
         });
 
         // 3. Logout Handling
-        $('#logoutBtn').click(function() {
-            $.ajax({
-                url: 'api.php?action=logout',
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    checkAuth();
-                }
-            });
+        $("#logoutBtn").click(function () {
+          $.ajax({
+            url: "api.php?action=logout",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+              checkAuth();
+            },
+          });
         });
 
         // 4. Data Loading functions
         function loadInventory() {
-            $.ajax({
-                url: 'api.php?action=get_inventory',
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        let rows = '';
-                        res.data.forEach(function(item) {
-                            let isLowStock = parseInt(item.quantity) <= parseInt(item.reorder_level);
-                            
-                            // Modern Status Badges
-                            let statusBadge = isLowStock 
-                                ? '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> Low Stock</span>' 
-                                : '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i> Healthy</span>';
+          $.ajax({
+            url: "api.php?action=get_inventory",
+            type: "GET",
+            cache: false,
+            dataType: "json",
+            success: function (res) {
+              if (res.status === "success") {
+                let rows = "";
+                res.data.forEach(function (item) {
+                  let isLowStock =
+                    parseInt(item.quantity) <= parseInt(item.reorder_level);
 
-                            rows += `<tr>
-                                <td class="ps-4">
-                                    <div class="fw-bold text-dark">${item.name}</div>
-                                    <div class="text-muted small">${item.description || 'No description'}</div>
-                                    <div class="text-muted small">ID: #${item.inventory_id}</div>
-                                </td>
-                                <td><span class="badge bg-light text-dark border">${item.supplier_name || 'N/A'}</span></td>
-                                <td class="fw-medium">₱${parseFloat(item.unit_price).toFixed(2)}</td>
-                                <td>
-                                    <div class="fw-bold ${isLowStock ? 'text-danger' : ''}">${item.quantity} units</div>
-                                    <div class="text-muted small">Reorder at ${item.reorder_level}</div>
-                                </td>
-                                <td class="pe-4 text-end">${statusBadge}</td>
-                            </tr>`;
-                        });
-                        $('#inventoryTableBody').html(rows);
-                    }
-                }
-            });
+                  // Modern Status Badges
+                  let statusBadge = isLowStock
+                    ? '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> Low Stock</span>'
+                    : '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i> Healthy</span>';
+
+                  // Inside loadInventory(), replace the rows += block with this:
+                  // Inside your loadInventory() function, replace the buttons with this:
+                  rows += `<tr>
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark">${item.name}</div>
+                        <div class="text-muted small">${item.description || "No description"}</div>
+                        <div class="text-muted small">ID: #${item.inventory_id}</div>
+                    </td>
+                    <td><span class="badge bg-light text-dark border">${item.supplier_name || "N/A"}</span></td>
+                    <td class="fw-medium">₱${parseFloat(item.unit_price).toFixed(2)}</td>
+                    <td>
+                        <div class="fw-bold ${isLowStock ? "text-danger" : ""}">${item.quantity} units</div>
+                        <div class="text-muted small">Reorder at ${item.reorder_level}</div>
+                    </td>
+                    <td class="text-end">${statusBadge}</td>
+                    <td class="pe-4 text-end">
+                        <button class="btn btn-sm btn-light text-warning me-1 issue-btn" 
+                            data-id="${item.inventory_id}" 
+                            data-name="${item.name}">
+                            <i class="bi bi-box-arrow-up"></i>
+                        </button>
+                        <button class="btn btn-sm btn-light text-primary me-1 edit-btn" 
+                            data-id="${item.inventory_id}" 
+                            data-name="${item.name}" 
+                            data-desc="${item.description}" 
+                            data-qty="${item.quantity}" 
+                            data-price="${item.unit_price}" 
+                            data-reorder="${item.reorder_level}" 
+                            data-supplier="${item.supplier_id}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-light text-danger delete-btn" data-id="${item.inventory_id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+                });
+                $("#inventoryTableBody").html(rows);
+              }
+            },
+          });
         }
 
         function loadSuppliers() {
-            $.ajax({
-                url: 'api.php?action=get_suppliers',
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        let options = '<option value="">Select...</option>';
-                        res.data.forEach(function(sup) {
-                            options += `<option value="${sup.supplier_id}">${sup.name}</option>`;
-                        });
-                        $('#supplierSelect').html(options);
-                    }
-                }
-            });
+          $.ajax({
+            url: "api.php?action=get_suppliers",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+              if (res.status === "success") {
+                let options = '<option value="">Select...</option>';
+                res.data.forEach(function (sup) {
+                  options += `<option value="${sup.supplier_id}">${sup.name}</option>`;
+                });
+                $("#supplierSelect").html(options);
+              }
+            },
+          });
         }
 
         // 5. Add Item Handling
-        $('#addItemForm').submit(function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: 'api.php?action=add_item',
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        $('#addItemModal').modal('hide');
-                        $('#addItemForm')[0].reset();
-                        $('#alertBox').html(`<div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
-                            <i class="bi bi-check-circle-fill me-2"></i> ${res.message}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>`);
-                        loadInventory();
-                    } else {
-                        alert("Error: " + res.message);
-                    }
-                }
-            });
+        $("#addItemForm").submit(function (e) {
+          e.preventDefault();
+          let submitBtn = $(this).find('button[type="submit"]');
+          let originalText = submitBtn.html();
+          submitBtn
+            .prop("disabled", true)
+            .html(
+              '<span class="spinner-border spinner-border-sm"></span> Saving...',
+            );
+
+          $.ajax({
+            url: "api.php?action=add_item",
+            type: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (res) {
+              submitBtn.prop("disabled", false).html(originalText);
+              if (res.status === "success") {
+                $("#addItemModal").modal("hide");
+                $("#addItemForm")[0].reset();
+                showAlert(res.message, "success");
+
+                // 🔥 THIS RELOADS THE LIST INSTANTLY
+                loadInventory();
+              } else {
+                showAlert(res.message, "danger");
+              }
+            },
+            error: function () {
+              submitBtn.prop("disabled", false).html(originalText);
+              showAlert("A network error occurred.", "danger");
+            },
+          });
         });
 
         // Tab Switching Logic
         let valuationChartInstance = null; // Variable to store the chart
 
-        window.switchTab = function(tab) {
-            $('.nav-link').removeClass('active');
-            $('#tab-' + tab).addClass('active');
-            
-            // Hide all containers first
-            $('#inventoryContainer, #poContainer, #analyticsContainer').hide();
-            
-            if (tab === 'inventory') {
-                $('#inventoryContainer').fadeIn();
-                loadInventory();
-            } else if (tab === 'po') {
-                $('#poContainer').fadeIn();
-                loadPOs();
-                populatePODropdowns();
-            } else if (tab === 'analytics') {
-                $('#analyticsContainer').fadeIn();
-                loadAnalytics();
-            }
+        window.switchTab = function (tab) {
+          $(".nav-link").removeClass("active");
+          $("#tab-" + tab).addClass("active");
+
+          // Hide all containers first
+          $("#inventoryContainer, #poContainer, #analyticsContainer").hide();
+
+          if (tab === "inventory") {
+            $("#inventoryContainer").fadeIn();
+            loadInventory();
+          } else if (tab === "po") {
+            $("#poContainer").fadeIn();
+            loadPOs();
+            populatePODropdowns();
+          } else if (tab === "analytics") {
+            $("#analyticsContainer").fadeIn();
+            loadAnalytics();
+          }
         };
 
         // Load Purchase Orders
         function loadPOs() {
-            $.ajax({
-                url: 'api.php?action=get_pos',
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        let rows = '';
-                        res.data.forEach(function(po) {
-                            let isReceived = po.status === 'Received';
-                            let statusBadge = isReceived 
-                                ? '<span class="badge bg-success bg-opacity-10 text-success rounded-pill">Received</span>'
-                                : '<span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Ordered</span>';
-                            
-                            let actionBtn = isReceived 
-                                ? `<button class="btn btn-sm btn-light disabled" disabled>Completed</button>`
-                                : `<button class="btn btn-sm btn-success shadow-sm" onclick="receivePO(${po.po_id})"><i class="bi bi-box-arrow-in-down"></i> Receive Goods</button>`;
+          $.ajax({
+            url: "api.php?action=get_pos",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+              if (res.status === "success") {
+                let rows = "";
+                res.data.forEach(function (po) {
+                  let isReceived = po.status === "Received";
+                  let statusBadge = isReceived
+                    ? '<span class="badge bg-success bg-opacity-10 text-success rounded-pill">Received</span>'
+                    : '<span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Ordered</span>';
 
-                            rows += `<tr>
+                  let actionBtn = isReceived
+                    ? `<button class="btn btn-sm btn-light disabled" disabled>Completed</button>`
+                    : `<button class="btn btn-sm btn-success shadow-sm" onclick="receivePO(${po.po_id})"><i class="bi bi-box-arrow-in-down"></i> Receive Goods</button>`;
+
+                  rows += `<tr>
                                 <td class="ps-4 fw-bold">#PO-${po.po_id}</td>
                                 <td>${po.order_date}</td>
                                 <td>${po.supplier_name}</td>
@@ -487,168 +903,373 @@
                                 <td>${statusBadge}</td>
                                 <td class="pe-4 text-end">${actionBtn}</td>
                             </tr>`;
-                        });
-                        $('#poTableBody').html(rows);
-                    }
-                }
-            });
+                });
+                $("#poTableBody").html(rows);
+              }
+            },
+          });
         }
 
         // Fill Suppliers in the Create PO Modal
         function populatePODropdowns() {
-            // Copy the supplier options from the Add Item modal
-            $('#poSupplierSelect').html($('#supplierSelect').html()); 
-            
-            // Reset the items dropdown
-            $('#poItemSelect').html('<option value="">Select a Supplier first...</option>');
+          // Copy the supplier options from the Add Item modal
+          $("#poSupplierSelect").html($("#supplierSelect").html());
+
+          // Reset the items dropdown
+          $("#poItemSelect").html(
+            '<option value="">Select a Supplier first...</option>',
+          );
         }
 
         // Listen for when a user selects a different Supplier
-        $('#poSupplierSelect').change(function() {
-            let supplier_id = $(this).val();
-            let itemSelect = $('#poItemSelect');
+        $("#poSupplierSelect").change(function () {
+          let supplier_id = $(this).val();
+          let itemSelect = $("#poItemSelect");
 
-            // If they selected the blank option, clear the items
-            if (!supplier_id) {
-                itemSelect.html('<option value="">Select a Supplier first...</option>');
-                return;
-            }
+          // If they selected the blank option, clear the items
+          if (!supplier_id) {
+            itemSelect.html(
+              '<option value="">Select a Supplier first...</option>',
+            );
+            return;
+          }
 
-            // Show a loading state
-            itemSelect.html('<option value="">Loading items...</option>');
+          // Show a loading state
+          itemSelect.html('<option value="">Loading items...</option>');
 
-            // Fetch items only for this specific supplier
-            $.ajax({
-                url: 'api.php?action=get_supplier_items&supplier_id=' + supplier_id,
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if (res.status === 'success') {
-                        if (res.data.length === 0) {
-                            itemSelect.html('<option value="">No items registered for this supplier</option>');
-                        } else {
-                            let options = '<option value="">Select an Item...</option>';
-                            res.data.forEach(function(item) {
-                                options += `<option value="${item.inventory_id}">${item.name} (Current Stock: ${item.quantity})</option>`;
-                            });
-                            itemSelect.html(options);
-                        }
-                    }
+          // Fetch items only for this specific supplier
+          $.ajax({
+            url: "api.php?action=get_supplier_items&supplier_id=" + supplier_id,
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+              if (res.status === "success") {
+                if (res.data.length === 0) {
+                  itemSelect.html(
+                    '<option value="">No items registered for this supplier</option>',
+                  );
+                } else {
+                  let options = '<option value="">Select an Item...</option>';
+                  res.data.forEach(function (item) {
+                    options += `<option value="${item.inventory_id}">${item.name} (Current Stock: ${item.quantity})</option>`;
+                  });
+                  itemSelect.html(options);
                 }
-            });
+              }
+            },
+          });
         });
 
         // Handle Create PO Form Submission
-        $('#createPOForm').submit(function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: 'api.php?action=create_po',
-                type: 'POST',
-                data: $(this).serialize(),
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        $('#createPOModal').modal('hide');
-                        $('#createPOForm')[0].reset();
-                        showAlert(res.message, 'success');
-                        loadPOs();
-                    } else {
-                        showAlert(res.message, 'danger');
-                    }
-                }
-            });
+        $("#createPOForm").submit(function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: "api.php?action=create_po",
+            type: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (res) {
+              if (res.status === "success") {
+                $("#createPOModal").modal("hide");
+                $("#createPOForm")[0].reset();
+                showAlert(res.message, "success");
+                loadPOs();
+              } else {
+                showAlert(res.message, "danger");
+              }
+            },
+          });
         });
 
         // Receive PO and Update Inventory
-        window.receivePO = function(po_id) {
-            if(confirm("Are you sure you want to receive these goods? This will update inventory stock.")) {
-                $.ajax({
-                    url: 'api.php?action=receive_po',
-                    type: 'POST',
-                    data: { po_id: po_id },
-                    dataType: 'json',
-                    success: function(res) {
-                        if(res.status === 'success') {
-                            showAlert(res.message, 'success');
-                            loadPOs(); // Refresh PO list
-                        } else {
-                            showAlert(res.message, 'danger');
-                        }
-                    }
-                });
-            }
+        window.receivePO = function (po_id) {
+          if (
+            confirm(
+              "Are you sure you want to receive these goods? This will update inventory stock.",
+            )
+          ) {
+            $.ajax({
+              url: "api.php?action=receive_po",
+              type: "POST",
+              data: { po_id: po_id },
+              dataType: "json",
+              success: function (res) {
+                if (res.status === "success") {
+                  showAlert(res.message, "success");
+                  loadPOs(); // Refresh PO list
+                } else {
+                  showAlert(res.message, "danger");
+                }
+              },
+            });
+          }
         };
 
-        function loadAnalytics() {
-            $.ajax({
-                url: 'api.php?action=get_analytics',
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if(res.status === 'success') {
-                        let data = res.data;
-                        
-                        // 1. Update the KPI Summary Cards
-                        $('#statTotalValue').text('$' + parseFloat(data.total_value).toLocaleString('en-US', {minimumFractionDigits: 2}));
-                        $('#statTotalItems').text(data.total_items);
-                        $('#statLowStock').text(data.low_stock_count);
-                        $('#statTotalSpend').text('$' + parseFloat(data.total_spend).toLocaleString('en-US', {minimumFractionDigits: 2}));
+        // Open Issue Modal
+        $(document).on("click", ".issue-btn", function () {
+          let btn = $(this);
+          $("#issue_inventory_id").val(btn.data("id"));
+          $("#issue_item_name").text(btn.data("name"));
+          $("#issue_qty").val(1); // Reset to 1
+          $("#issueItemModal").modal("show");
+        });
 
-                        // 2. Prepare data for the Chart
-                        let labels = [];
-                        let values = [];
-                        data.chart_data.forEach(function(row) {
-                            labels.push(row.supplier_name);
-                            values.push(row.supplier_value);
-                        });
+        // Submit Issue Form
+        $("#issueItemForm").submit(function (e) {
+          e.preventDefault();
+          let submitBtn = $(this).find('button[type="submit"]');
+          let originalText = submitBtn.html();
+          submitBtn
+            .prop("disabled", true)
+            .html(
+              '<span class="spinner-border spinner-border-sm"></span> Processing...',
+            );
 
-                        // Destroy old chart instance if it exists (prevents hover glitches)
-                        if(valuationChartInstance) {
-                            valuationChartInstance.destroy();
-                        }
+          $.ajax({
+            url: "api.php?action=issue_item",
+            type: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (res) {
+              submitBtn.prop("disabled", false).html(originalText);
+              if (res.status === "success") {
+                $("#issueItemModal").modal("hide");
+                showAlert(res.message, "success");
+                loadInventory(); // Refresh the table instantly!
+              } else {
+                showAlert(res.message, "danger");
+              }
+            },
+          });
+        });
 
-                        // 3. Render the Bar Chart
-                        let ctx = document.getElementById('valuationChart').getContext('2d');
-                        valuationChartInstance = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Total Stock Value ($)',
-                                    data: values,
-                                    backgroundColor: 'rgba(13, 110, 253, 0.7)', // Bootstrap primary color with transparency
-                                    borderColor: 'rgba(13, 110, 253, 1)',
-                                    borderWidth: 1,
-                                    borderRadius: 4
-                                }]
-                            },
-                            options: { 
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        ticks: {
-                                            callback: function(value) {
-                                                return '$' + value; // Add dollar sign to y-axis
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                    }
+        window.loadAnalytics = function (btn = null) {
+          // 1. If triggered by the button, set the loading state
+          let originalText = "";
+          if (btn) {
+            originalText = $(btn).html();
+            $(btn)
+              .prop("disabled", true)
+              .html(
+                '<span class="spinner-border spinner-border-sm"></span> Refreshing...',
+              );
+          }
+
+          $.ajax({
+            url: "api.php?action=get_analytics",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+              if (btn) {
+                $(btn).prop("disabled", false).html(originalText);
+              }
+
+              if (res.status === "success") {
+                let data = res.data;
+
+                // 1. Update the KPI Summary Cards
+                $("#statTotalValue").text(
+                  "₱" +
+                    parseFloat(data.total_value).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                    }),
+                );
+                $("#statTotalSpend").text(
+                  "₱" +
+                    parseFloat(data.total_spend).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                    }),
+                );
+                $("#statTurnover").text(data.turnover_ratio + "x");
+                $("#statTotalItems").text(data.total_items);
+                $("#statLowStock").text(data.low_stock);
+                $("#statOverstock").text(data.overstock);
+
+                // 2. Prepare data for Valuation Chart
+                let valLabels = [];
+                let valData = [];
+                data.valuation_data.forEach(function (row) {
+                  valLabels.push(row.supplier_name);
+                  valData.push(row.supplier_value);
+                });
+
+                // 3. Prepare data for Spend Chart
+                let spendLabels = [];
+                let spendData = [];
+                data.spend_by_category.forEach(function (row) {
+                  spendLabels.push(row.category_name);
+                  spendData.push(row.category_spend);
+                });
+
+                // Destroy old charts if they exist
+                if (window.valuationChartInstance)
+                  window.valuationChartInstance.destroy();
+                if (window.spendChartInstance)
+                  window.spendChartInstance.destroy();
+
+                // 4. Render Valuation Bar Chart
+                let ctxVal = document
+                  .getElementById("valuationChart")
+                  .getContext("2d");
+                window.valuationChartInstance = new Chart(ctxVal, {
+                  type: "bar",
+                  data: {
+                    labels: valLabels,
+                    datasets: [
+                      {
+                        label: "Valuation (₱)",
+                        data: valData,
+                        backgroundColor: "rgba(13, 110, 253, 0.7)",
+                        borderRadius: 4,
+                      },
+                    ],
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                  },
+                });
+
+                // 5. Render Spend by Category Doughnut Chart
+                let ctxSpend = document
+                  .getElementById("spendChart")
+                  .getContext("2d");
+                window.spendChartInstance = new Chart(ctxSpend, {
+                  type: "doughnut",
+                  data: {
+                    labels: spendLabels,
+                    datasets: [
+                      {
+                        data: spendData,
+                        backgroundColor: [
+                          "#198754",
+                          "#ffc107",
+                          "#0dcaf0",
+                          "#d63384",
+                          "#6f42c1",
+                        ],
+                        borderWidth: 0,
+                      },
+                    ],
+                  },
+                  options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "70%",
+                    plugins: { legend: { position: "right" } },
+                  },
+                });
+
+                if (btn) {
+                  showAlert(
+                    "Dashboard data refreshed successfully!",
+                    "success",
+                  );
                 }
+              }
+            },
+            error: function () {
+              // Failsafe: restore button if the network drops
+              if (btn) {
+                $(btn).prop("disabled", false).html(originalText);
+              }
+              showAlert(
+                "Network error while trying to refresh data.",
+                "danger",
+              );
+            },
+          });
+        };
+
+        // Open Edit Modal (Triggered by the new .edit-btn class)
+        $(document).on("click", ".edit-btn", function () {
+          // Copy suppliers dropdown
+          $("#edit_supplier_id").html($("#supplierSelect").html());
+
+          // Extract data from the button we just clicked
+          let btn = $(this);
+          $("#edit_inventory_id").val(btn.data("id"));
+          $("#edit_name").val(btn.data("name"));
+          $("#edit_description").val(btn.data("desc"));
+          $("#edit_quantity").val(btn.data("qty"));
+          $("#edit_unit_price").val(btn.data("price"));
+          $("#edit_reorder_level").val(btn.data("reorder"));
+          $("#edit_supplier_id").val(btn.data("supplier"));
+
+          // Show the modal
+          $("#editItemModal").modal("show");
+        });
+
+        // Submit the Edit Form
+        $("#editItemForm").submit(function (e) {
+          e.preventDefault();
+          let submitBtn = $(this).find('button[type="submit"]');
+          let originalText = submitBtn.html();
+          submitBtn
+            .prop("disabled", true)
+            .html(
+              '<span class="spinner-border spinner-border-sm"></span> Updating...',
+            );
+
+          $.ajax({
+            url: "api.php?action=update_item",
+            type: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (res) {
+              submitBtn.prop("disabled", false).html(originalText);
+              if (res.status === "success") {
+                $("#editItemModal").modal("hide");
+                showAlert(res.message, "success");
+
+                // Force the reload
+                loadInventory();
+              } else {
+                showAlert(res.message, "danger");
+              }
+            },
+          });
+        });
+
+        // Delete Item (Triggered by the new .delete-btn class)
+        $(document).on("click", ".delete-btn", function () {
+          let itemId = $(this).data("id"); // Get the ID from the button's data attribute
+
+          if (
+            confirm(
+              "Are you sure you want to delete this item? This cannot be undone.",
+            )
+          ) {
+            $.ajax({
+              url: "api.php?action=delete_item",
+              type: "POST",
+              data: { inventory_id: itemId },
+              dataType: "json",
+              success: function (res) {
+                if (res.status === "success") {
+                  showAlert(res.message, "success");
+
+                  // Force the reload
+                  loadInventory();
+                } else {
+                  // This will catch the Foreign Key constraint if it's tied to a PO!
+                  showAlert(res.message, "danger");
+                }
+              },
             });
-        }
+          }
+        });
 
         // Helper function for alerts
         function showAlert(msg, type) {
-            $('#alertBox').html(`<div class="alert alert-${type} alert-dismissible fade show border-0 shadow-sm">
+          $("#alertBox")
+            .html(`<div class="alert alert-${type} alert-dismissible fade show border-0 shadow-sm">
                 ${msg}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>`);
         }
-    });
+      });
     </script>
-</body>
+  </body>
 </html>
