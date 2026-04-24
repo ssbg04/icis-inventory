@@ -1,3 +1,5 @@
 # Ignore development folders
 revision/
 testing/
+
+.env
