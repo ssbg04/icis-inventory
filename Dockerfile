@@ -1,17 +1,22 @@
 FROM php:8.2-apache
 
-# Install MySQL extensions
+# Install required extensions
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Copy project files
+# Enable Apache modules
+RUN a2enmod rewrite headers
+
+# Copy project
 COPY . /var/www/html/
 
-# Enable Apache rewrite (optional but useful)
-RUN a2enmod rewrite
+# Fix permissions (IMPORTANT FIXED TYPO)
+RUN chown -R www-data:www-data /var/www/html/
 
+# Ensure Apache allows .htaccess (API routing support)
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-RUN chown -R www-data:www-data /var/wwww/html/
+# Optional: clean API-friendly Apache config
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 EXPOSE 80
 

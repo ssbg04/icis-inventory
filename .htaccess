@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Send everything to index.php (API router style)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ api.php [QSA,L]
