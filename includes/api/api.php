@@ -1,5 +1,27 @@
 <?php
 session_start();
+// ==========================================
+// SESSION TIMEOUT LOGIC (Idle Timer)
+// ==========================================
+$timeout_duration = 43200; // 43200 seconds = 12 hours. (Use 3600 for 1 hour, 86400 for 24 hours)
+
+if (isset($_SESSION['user_id'])) {
+    if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout_duration) {
+        // The user was idle for too long. Destroy the session!
+        session_unset();
+        session_destroy();
+        
+        // If the frontend is quietly checking auth, tell it the session died
+        if (isset($_GET['action']) && $_GET['action'] === 'check_auth') {
+            echo json_encode(['status' => 'timeout', 'message' => 'Session expired.']);
+            exit;
+        }
+    } else {
+        // The user is active! Reset the timer back to zero.
+        $_SESSION['last_activity'] = time();
+    }
+}
+
 header('Content-Type: application/json');
 require_once dirname(__DIR__) . '/db/db.php'; // Ensure your db.php from the previous step is still present
 
@@ -63,6 +85,9 @@ switch ($action) {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['full_name'] = $user['first_name'] ? $user['first_name'] . ' ' . $user['last_name'] : 'Administrator';
+
+                // START THE TIMEOUT CLOCK!
+                $_SESSION['last_activity'] = time();
 
                 echo json_encode(['status' => 'success', 'message' => 'Login successful']);
             } else {
