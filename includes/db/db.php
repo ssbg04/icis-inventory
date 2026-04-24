@@ -1,9 +1,13 @@
 <?php
 // db.php
-$host = 'localhost';
-$db_name = 'icis'; // Change this to your database name
-$username = 'root'; // Change if your DB user is different
-$password = ''; // Change if your DB has a password
+// $host = 'localhost';
+// $db_name = 'icis'; // Change this to your database name
+// $username = 'root'; // Change if your DB user is different
+// $password = ''; // Change if your DB has a password
+$host = 'sql.freedb.tech';
+$db_name = 'freedb_icis-inventory'; // Change this to your database name
+$username = 'freedb_kristyarls'; // Change if your DB user is different
+$password = 'Wwh7Du4?MJ8wKg!'; // Change if your DB has a password
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
