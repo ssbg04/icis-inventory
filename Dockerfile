@@ -11,7 +11,7 @@ RUN a2enmod rewrite
 
 RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-RUN chown -R www-data:www-data /var/wwww/html
+RUN chown -R www-data:www-data /var/wwww/html/
 
 EXPOSE 80
 
