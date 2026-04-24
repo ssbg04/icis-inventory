@@ -5,9 +5,6 @@
 // $username = 'root'; // Change if your DB user is different
 // $password = ''; // Change if your DB has a password
 // $port = 3306;
-// require_once __DIR__ . "/../env_loader.php";
-// loadEnv(__DIR__ . "/../../.env");
-
 // var_dump([
 //     "DB_HOST" => getenv("DB_HOST"),
 //     "DB_PORT" => getenv("DB_PORT"),
@@ -17,6 +14,9 @@
 // ]);
 // exit;
 
+// require_once __DIR__ . "/../env_loader.php";
+// loadEnv(__DIR__ . "/../../.env");
+    
 $host = getenv("DB_HOST");
 $port = getenv("DB_PORT");
 $db_name = getenv("DB_NAME");

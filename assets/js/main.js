@@ -25,12 +25,22 @@ let spendChartInstance = null;
 // 2. GLOBAL HELPER FUNCTIONS
 // ==========================================
 function showAlert(msg, type) {
+  // Create a unique ID for this alert so the timer doesn't accidentally hide a newer alert
+  let alertId = 'alert-' + Date.now();
+
   $("#alertBox").html(`
-    <div class="alert alert-${type} alert-dismissible fade show border-0 shadow-sm">
+    <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show border-0 shadow-sm" style="z-index: 1050;">
       ${msg}
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   `);
+
+  // Auto-hide the alert after 4 seconds (4000 milliseconds)
+  setTimeout(function() {
+    $("#" + alertId).fadeOut(400, function() {
+      $(this).remove(); // Completely removes it from the screen
+    });
+  }, 4000);
 }
 
 // ==========================================
@@ -48,6 +58,8 @@ function initPageScripts(page) {
     if (typeof loadAnalytics === "function") loadAnalytics();
   } else if (page === "vendors") {
     if (typeof loadVendors === "function") loadVendors();
+  } else if (page === "issued") {
+    if (typeof loadIssuedItems === "function") loadIssuedItems();
   }
 }
 

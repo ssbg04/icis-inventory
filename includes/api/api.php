@@ -144,6 +144,28 @@ switch ($action) {
         echo json_encode(['status' => 'success', 'data' => $items]);
         break;
 
+    case 'get_issued_items':
+        try {
+            // Join transactions with inventory to get the item names
+            $stmt = $pdo->query("
+                SELECT 
+                    t.transaction_id, 
+                    t.transaction_date, 
+                    t.qty_issued, 
+                    i.inventory_id, 
+                    i.name, 
+                    i.description 
+                FROM inventory_transactions t
+                JOIN inventory_items i ON t.inventory_id = i.inventory_id
+                ORDER BY t.transaction_date DESC
+            ");
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode(['status' => 'success', 'data' => $data]);
+        } catch (Exception $e) {
+            echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
+        }
+        break;
+
     // ---------------------------------------------------------
     // NEW VENDOR MANAGEMENT ENDPOINTS
     // ---------------------------------------------------------

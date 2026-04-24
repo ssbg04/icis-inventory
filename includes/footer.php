@@ -5,3 +5,4 @@
 <script src="assets/js/vendors.js"></script>
 <script src="assets/js/po.js"></script>
 <script src="assets/js/analytics.js"></script>
+<script src="assets/js/issued.js"></script>

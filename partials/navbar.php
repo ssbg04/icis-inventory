@@ -6,6 +6,11 @@
         </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="#" id="tab-issued" onclick="switchTab('issued')">
+                <i class="bi bi-clock-history me-1"></i> Issued Logs
+            </a>
+        </li>
+        <li class="nav-item">
         <a class="nav-link" href="#" id="tab-vendors" onclick="switchTab('vendors')">
             <i class="bi bi-boxes me-1"></i>Vendors
         </a>
