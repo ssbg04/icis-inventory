@@ -24,7 +24,16 @@ $(document).ready(function () {
           if (!window.currentTab) {
             switchTab('inventory'); 
           }
-        } else {
+        } else if (res.status === "timeout"){
+          $("#topNavbar, #dashboardSection").hide();
+          $("#loginSection").addClass("d-flex").fadeIn(); 
+          showAlert("Your session has expired due to inactivity. Please log in again.", "warning");
+          
+          allInventoryData = [];
+          allPOData = [];
+          window.currentTab = null;
+        }
+         else {
           $("#topNavbar, #dashboardSection").hide();
           $("#loginSection").addClass("d-flex").fadeIn(); 
         }
@@ -34,6 +43,12 @@ $(document).ready(function () {
         $("#loginSection").addClass("d-flex").fadeIn();
       }
     });
+    
+    setInterval(function() {
+      if ($("#dashboardSection").is(":visible")) {
+          checkAuth();
+      }
+    }, 5 * 60 * 1000);
   }
 
   // 2. Handle Login Form & Brute Force Cooldown Timer

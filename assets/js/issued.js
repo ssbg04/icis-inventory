@@ -6,7 +6,7 @@ $(document).ready(function () {
   let allIssuedData = [];
   let filteredIssuedData = [];
   let issuedCurrentPage = 1;
-  const issuedItemsPerPage = 5; // Show 10 rows per page
+  const issuedItemsPerPage = 10; // Show 10 rows per page
 
   window.loadIssuedItems = function (btn = null) {
     let originalText = "";
