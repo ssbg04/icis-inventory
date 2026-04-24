@@ -1,0 +1,63 @@
+DONE!!!!
+
+- gagawa ng vendor management (details) history (details and history of the vendors) DONE
+- pag kalahati ung  dumating dapat ay irereceived na. (dynamic collection)
+- oorder sya tas coconnect sa finance tas saka pa lalabas sa inventory. (Iaapproved muna ng finance bago magdisplay sa inventory) (pending to approved/receive)
+- automated stock control (automatic nagrerestock) need ng notification tas ung taga bantay saka mag rere order.
+reporting analytics search in other website (4 analytics pili lng kung ano mas applicable sa system natin)
+descriptive (real time)
+
+#------------------------------------------------------------------------------------------------#
+
+IN PROGRESS....
+
+Need ng login dun papasok ung user
+possible 2-3 users.
+
+
+ANNOUNCEMENT -------------------------------
+Need muna tapusin ang system bago kuhanin ang template kay sir irerecheck system every online class. Final checking ng system F2F before mag defense. ( May no date)
+template (possible makuha or ibigay sa monday)
+Documentation (programmer tester and analyst)
+Nka compile ung documentation.
+
+May 30 (defense) panelist sir calica, sir carl, sir pat, maam basa, hahanap pa ng iba.
+
+
+END POINTS ======================================
+
+GET procurement = https://icis-inventory.free.nf/includes/api/api.php?action=get_pos
+GET suppliers = https://icis-inventory.free.nf/includes/api/api.php?action=get_suppliers
+POST update Procurement Order status = https://icis-inventory.free.nf/includes/api/api.php?action=update_po_status (send using body form)
+
+
+
+Feature / Action,Admin,Procurement Officer
+
+----- Mga okay na
+Inventory Management,,
+View Inventory List,✅,✅
+Add / Edit Items,✅,✅
+Issue / Dispense Items,✅,✅
+Delete Items,✅,❌ (Prevent accidental data loss)
+
+Vendor Management,,
+View Vendors & History,✅,✅
+Add / Edit Vendors,✅,✅
+Delete Vendors,✅,❌ (Keep records intact)
+
+Analytics & Reports,,
+View Dashboard & Charts,✅,✅
+Export to Excel / PDF,✅,✅
+Trigger Auto-Restock,✅,✅ (Generates 'Pending' POs)
+
+----- Mga hindi pa okay
+
+Purchase Orders (POs),,
+Approve PO,✅,❌ (Must be done by Admin/Finance)
+Cancel PO,✅,❌ (Require approval to cancel)
+
+Create New PO,✅,✅ (Status becomes 'Pending')
+Edit PO Qty (While Pending),✅,✅
+Receive PO (Add to Stock),✅,✅ (When delivery arrives)
+Report Missing / Issues,✅,✅
