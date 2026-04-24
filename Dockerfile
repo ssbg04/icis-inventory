@@ -9,10 +9,10 @@ COPY . /var/www/html/
 # Enable Apache rewrite (optional but useful)
 RUN a2enmod rewrite
 
-# Apache listen on Render port
-ENV PORT 10000
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-RUN sed -i "s/Listen 80/Listen 10000/" /etc/apache2/ports.conf
-RUN sed -i "s/:80:10000/g" /etc/apache2/sites-available/000-default.conf
+RUN chown -R www-data:www-data /var/wwww/html
 
-EXPOSE 10000
+EXPOSE 80
+
+CMD ["apache2-foreground"]
