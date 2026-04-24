@@ -8,6 +8,15 @@
 require_once __DIR__ . "/../env_loader.php";
 loadEnv(__DIR__ . "/../../.env");
 
+var_dump([
+    "DB_HOST" => getenv("DB_HOST"),
+    "DB_PORT" => getenv("DB_PORT"),
+    "DB_NAME" => getenv("DB_NAME"),
+    "DB_USER" => getenv("DB_USER"),
+    "DB_PASS" => getenv("DB_PASS"),
+]);
+exit;
+
 $host = getenv("DB_HOST");
 $port = getenv("DB_PORT");
 $db_name = getenv("DB_NAME");
