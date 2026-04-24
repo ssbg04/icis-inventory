@@ -774,6 +774,13 @@ switch ($action) {
             ");
             $predictive_data = $stmtPredict->fetchAll(PDO::FETCH_ASSOC);
 
+            $issuedStmt = $pdo->query("
+                SELECT COALESCE(SUM(qty_issued), 0) as total_issued 
+                FROM inventory_transactions 
+                WHERE transaction_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+            ");
+            $issued_30_days = $issuedStmt->fetch(PDO::FETCH_ASSOC)['total_issued'];
+
             // Calculate explicit days for the JSON payload
             foreach($predictive_data as &$pred) {
                 $pred['days_left'] = floor($pred['quantity'] / $pred['daily_burn']);
@@ -792,6 +799,7 @@ switch ($action) {
                     'low_stock' => $shortages['low_stock'] ?? 0,
                     'total_spend' => $total_spend,
                     'turnover_ratio' => round($turnover_ratio, 2),
+                    'issued_30_days' => $issued_30_days,
                     'spend_by_category' => $spend_by_category,
                     'valuation_data' => $valuation_data,
                     'predictions' => $predictive_data

@@ -27,6 +27,7 @@ $(document).ready(function () {
           $("#statTotalSpend").text("₱" + parseFloat(data.total_spend).toLocaleString("en-US", { minimumFractionDigits: 2 }));
           $("#statTotalItems").text(data.total_items);
           $("#statTurnover").text(data.turnover_ratio + "x");
+          $("#statIssuedItems").text(data.issued_30_days || "0");
 
           // Predictive List
           let predHtml = "";
@@ -53,12 +54,22 @@ $(document).ready(function () {
             $("#prescriptiveAutoRestockBtn").prop("disabled", true).removeClass("btn-success").addClass("btn-secondary").html('<i class="bi bi-check-all me-2"></i> Stock Optimal');
           }
 
-          // Charts
-          let valLabels = []; let valData = [];
-          data.valuation_data.forEach(row => { valLabels.push(row.supplier_name); valData.push(row.supplier_value); });
+          // Charts Data Preparation
+          let valLabels = []; 
+          let valData = [];
+          data.valuation_data.forEach(row => { 
+            let formattedValue = '₱' + parseFloat(row.supplier_value).toLocaleString("en-US", { minimumFractionDigits: 2 });
+            // 🔥 Multi-line X-Axis: Puts the Name on top, Number underneath
+            valLabels.push([row.supplier_name, formattedValue]); 
+            valData.push(row.supplier_value); 
+          });
 
-          let spendLabels = []; let spendData = [];
-          data.spend_by_category.forEach(row => { spendLabels.push(row.category_name); spendData.push(row.category_spend); });
+          let spendLabels = []; 
+          let spendData = [];
+          data.spend_by_category.forEach(row => { 
+            spendLabels.push(row.category_name); 
+            spendData.push(row.category_spend); 
+          });
 
           if (window.valuationChartInstance) window.valuationChartInstance.destroy();
           if (window.spendChartInstance) window.spendChartInstance.destroy();
@@ -67,20 +78,86 @@ $(document).ready(function () {
           if(ctxVal) {
             window.valuationChartInstance = new Chart(ctxVal.getContext("2d"), {
               type: "bar",
-              data: { labels: valLabels, datasets: [{ label: "Valuation (₱)", data: valData, backgroundColor: "rgba(13, 110, 253, 0.8)", borderRadius: 4 }] },
-              plugins: [ChartDataLabels],
-              options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { color: '#ffffff', anchor: 'end', align: 'bottom', font: { weight: 'bold' }, formatter: value => '₱' + parseFloat(value).toLocaleString("en-US") } } }
+              data: { 
+                  labels: valLabels, 
+                  datasets: [{ 
+                      label: "Valuation", 
+                      data: valData, 
+                      backgroundColor: "rgba(13, 110, 253, 0.8)", 
+                      borderRadius: 4 
+                  }] 
+              },
+              // 🔥 Removed ChartDataLabels plugin to clear floating numbers
+              options: { 
+                  layout: { padding: { top: 20, right: 20, bottom: 10, left: 10 } }, 
+                  responsive: true, 
+                  maintainAspectRatio: false, 
+                  plugins: { 
+                      legend: { display: false }
+                  },
+                  scales: {
+                      x: {
+                          ticks: {
+                              // Center aligns the multi-line text beautifully
+                              align: 'center',
+                              color: '#495057',
+                              font: { weight: '500', size: 11 }
+                          }
+                      }
+                  }
+              }
             });
           }
 
           let ctxSpend = document.getElementById("spendChart");
           if (ctxSpend) {
+            // Define colors array so we can share it between the chart and the HTML legend
+            let doughnutColors = ["#198754", "#ffc107", "#0dcaf0", "#d63384", "#6f42c1", "#fd7e14", "#20c997", "#6610f2"];
+
             window.spendChartInstance = new Chart(ctxSpend.getContext("2d"), {
               type: "doughnut",
-              data: { labels: spendLabels, datasets: [{ data: spendData, backgroundColor: ["#198754", "#ffc107", "#0dcaf0", "#d63384", "#6f42c1"], borderWidth: 2, borderColor: '#ffffff' }] },
-              plugins: [ChartDataLabels],
-              options: { responsive: true, maintainAspectRatio: false, cutout: "60%", plugins: { legend: { position: "right", labels: { padding: 15, generateLabels: function(chart) { const data = chart.data; if (data.labels.length && data.datasets.length) { return data.labels.map(function(label, i) { const meta = chart.getDatasetMeta(0); const style = meta.controller.getStyle(i); const value = data.datasets[0].data[i]; const formattedVal = '₱' + parseFloat(value).toLocaleString("en-US"); return { text: `${label} (${formattedVal})`, fillStyle: style.backgroundColor, strokeStyle: style.borderColor, lineWidth: style.borderWidth, hidden: !chart.getDataVisibility(i), index: i }; }); } return []; } } }, datalabels: { color: '#ffffff', font: { weight: 'bold', size: 11 }, formatter: value => value == 0 ? '' : '₱' + parseFloat(value).toLocaleString("en-US") } } }
+              data: { 
+                  labels: spendLabels, 
+                  datasets: [{ 
+                      data: spendData, 
+                      backgroundColor: doughnutColors, 
+                      borderWidth: 2, 
+                      borderColor: '#ffffff' 
+                  }] 
+              },
+              options: { 
+                  layout: { padding: 10 }, 
+                  responsive: true, 
+                  maintainAspectRatio: false, 
+                  cutout: "65%", 
+                  plugins: { 
+                      // 🔥 Turn off the squished built-in canvas legend completely!
+                      legend: { display: false } 
+                  } 
+              }
             });
+
+            // 🔥 Generate a beautiful, perfectly formatted HTML Legend
+            let legendHtml = '<div class="row mt-4 text-center justify-content-center">';
+            
+            spendLabels.forEach((label, i) => {
+                let value = '₱' + parseFloat(spendData[i]).toLocaleString("en-US", { minimumFractionDigits: 2 });
+                let color = doughnutColors[i % doughnutColors.length];
+                
+                legendHtml += `
+                    <div class="col-6 mb-3">
+                        <div class="d-flex align-items-center justify-content-center mb-1">
+                            <span class="shadow-sm" style="width: 12px; height: 12px; background-color: ${color}; border-radius: 50%; margin-right: 8px;"></span>
+                            <span class="text-muted small fw-bold text-truncate" title="${label}">${label}</span>
+                        </div>
+                        <div class="fw-bold text-dark">${value}</div>
+                    </div>`;
+            });
+            legendHtml += '</div>';
+
+            // Remove any old custom legend, then inject the new one right below the canvas container
+            $("#customSpendLegend").remove();
+            $(ctxSpend).parent().after(`<div id="customSpendLegend">${legendHtml}</div>`);
           }
 
           if (btn) showAlert("Dashboard data refreshed successfully!", "success");
@@ -117,13 +194,75 @@ $(document).ready(function () {
 
   // --- 3. EXPORT TO EXCEL ---
   window.exportExcel = function() {
-    if (!currentAnalyticsData) { showAlert("Please wait for analytics data to load.", "warning"); return; }
+    if (!currentAnalyticsData) { 
+      showAlert("Please wait for analytics data to load.", "warning"); 
+      return; 
+    }
+
+    // Helper function to cleanly format currency for the spreadsheet
+    const formatCurrency = (val) => '₱' + parseFloat(val).toLocaleString("en-US", { minimumFractionDigits: 2 });
+
     const wb = XLSX.utils.book_new();
-    const kpiData = [ ["Metric", "Value"], ["Total Stock Valuation", parseFloat(currentAnalyticsData.total_value)], ["Total PO Spend", parseFloat(currentAnalyticsData.total_spend)], ["Inventory Turnover Ratio", parseFloat(currentAnalyticsData.turnover_ratio)], ["Total Unique Items", parseInt(currentAnalyticsData.total_items)], ["Shortages (Low Stock)", parseInt(currentAnalyticsData.low_stock)] ];
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(kpiData), "KPI Summary");
-    const valData = [["Supplier Name", "Stock Valuation (₱)"]]; currentAnalyticsData.valuation_data.forEach(row => { valData.push([row.supplier_name, parseFloat(row.supplier_value)]); }); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(valData), "Valuation by Supplier");
-    const spendData = [["Category/Supplier", "Total Spend (₱)"]]; currentAnalyticsData.spend_by_category.forEach(row => { spendData.push([row.category_name, parseFloat(row.category_spend)]); }); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(spendData), "Spend by Category");
-    XLSX.writeFile(wb, `Inventory_Analytics_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+    // SHEET 1: KPI Summary
+    const kpiData = [
+      ["System Analytics", "Value"],
+      ["Current Stock Value", formatCurrency(currentAnalyticsData.total_value)],
+      ["Total Purchases (Spend)", formatCurrency(currentAnalyticsData.total_spend)],
+      ["Inventory Turnover Ratio", parseFloat(currentAnalyticsData.turnover_ratio) + "x"],
+      ["Total Unique Items", parseInt(currentAnalyticsData.total_items)],
+      ["Items Issued/Borrowed (30 Days)", parseInt(currentAnalyticsData.issued_30_days || 0)],
+      ["Critical Shortages (Action Items)", parseInt(currentAnalyticsData.low_stock)],
+      ["Overstock Alerts", parseInt(currentAnalyticsData.overstock)]
+    ];
+    const wsKpi = XLSX.utils.aoa_to_sheet(kpiData);
+    // Expand column widths to make it readable
+    wsKpi['!cols'] = [{ wch: 35 }, { wch: 20 }]; 
+    XLSX.utils.book_append_sheet(wb, wsKpi, "KPI Summary");
+
+    // SHEET 2: Valuation by Supplier
+    const valData = [["Supplier Name", "Stock Valuation"]]; 
+    if (currentAnalyticsData.valuation_data) {
+      currentAnalyticsData.valuation_data.forEach(row => { 
+        valData.push([row.supplier_name, formatCurrency(row.supplier_value)]); 
+      }); 
+    }
+    const wsVal = XLSX.utils.aoa_to_sheet(valData);
+    wsVal['!cols'] = [{ wch: 30 }, { wch: 20 }];
+    XLSX.utils.book_append_sheet(wb, wsVal, "Valuation by Supplier");
+
+    // SHEET 3: Spend by Category
+    const spendData = [["Category / Supplier", "Total Spend"]]; 
+    if (currentAnalyticsData.spend_by_category) {
+      currentAnalyticsData.spend_by_category.forEach(row => { 
+        spendData.push([row.category_name, formatCurrency(row.category_spend)]); 
+      }); 
+    }
+    const wsSpend = XLSX.utils.aoa_to_sheet(spendData);
+    wsSpend['!cols'] = [{ wch: 30 }, { wch: 20 }];
+    XLSX.utils.book_append_sheet(wb, wsSpend, "Spend by Category");
+
+    // SHEET 4: Stock Depletion Forecast
+    const forecastData = [["Item Name", "Current Stock", "Daily Burn Rate", "Estimated Days Left"]];
+    if (currentAnalyticsData.predictions && currentAnalyticsData.predictions.length > 0) {
+      currentAnalyticsData.predictions.forEach(item => {
+        forecastData.push([
+          item.name,
+          item.quantity + " units",
+          parseFloat(item.daily_burn).toFixed(2) + " / day",
+          item.days_left + " days"
+        ]);
+      });
+    } else {
+      forecastData.push(["No imminent stockouts predicted!", "-", "-", "-"]);
+    }
+    const wsForecast = XLSX.utils.aoa_to_sheet(forecastData);
+    wsForecast['!cols'] = [{ wch: 35 }, { wch: 15 }, { wch: 18 }, { wch: 20 }];
+    XLSX.utils.book_append_sheet(wb, wsForecast, "Depletion Forecast");
+
+    // Generate and download the file
+    let dateStr = new Date().toISOString().split('T')[0];
+    XLSX.writeFile(wb, `ICIS_Analytics_Report_${dateStr}.xlsx`);
   };
 
   // --- 4. EXPORT TO PDF ---
@@ -132,20 +271,76 @@ $(document).ready(function () {
     const element = document.getElementById('analyticsContainer'); 
     const buttons = document.getElementById('analyticsButtons');
     
-    buttons.style.display = 'none'; 
-    const originalWidth = element.style.width; const originalMaxWidth = element.style.maxWidth; const originalBg = element.style.backgroundColor; const originalPadding = element.style.padding;
-    const targetWidth = 1200; element.style.width = targetWidth + 'px'; element.style.maxWidth = targetWidth + 'px'; element.style.backgroundColor = '#f3f4f6'; element.style.padding = '20px';
+    if (!element) return; // Failsafe
     
-    html2canvas(element, { scale: 2, useCORS: true, logging: false, width: targetWidth, windowWidth: targetWidth }).then((canvas) => {
-      buttons.style.display = 'flex'; element.style.width = originalWidth; element.style.maxWidth = originalMaxWidth; element.style.backgroundColor = originalBg; element.style.padding = originalPadding;
-      const imgData = canvas.toDataURL('image/jpeg', 1.0); const pdf = new jsPDF('landscape', 'in', 'letter'); const pdfWidth = pdf.internal.pageSize.getWidth(); const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgProps = pdf.getImageProperties(imgData); const margin = 0.3; const maxImgWidth = pdfWidth - (margin * 2); const maxImgHeight = pdfHeight - (margin * 2);
-      const ratio = Math.min(maxImgWidth / imgProps.width, maxImgHeight / imgProps.height); const finalWidth = imgProps.width * ratio; const finalHeight = imgProps.height * ratio;
-      pdf.addImage(imgData, 'JPEG', (pdfWidth - finalWidth) / 2, margin, finalWidth, finalHeight); pdf.save(`Inventory_Report_${new Date().toISOString().split('T')[0]}.pdf`);
-    }).catch(err => {
-      buttons.style.display = 'flex'; element.style.width = originalWidth; element.style.maxWidth = originalMaxWidth; element.style.backgroundColor = originalBg; element.style.padding = originalPadding;
-      showAlert("Failed to generate PDF.", "danger");
-    });
+    // 1. Hide buttons and lock layout for snapshot
+    buttons.style.display = 'none'; 
+    const originalWidth = element.style.width; 
+    const originalMaxWidth = element.style.maxWidth; 
+    const originalBg = element.style.backgroundColor; 
+    const originalPadding = element.style.padding;
+    
+    // Force a wide desktop view so charts don't squash together
+    const targetWidth = 1440; 
+    element.style.width = targetWidth + 'px'; 
+    element.style.maxWidth = targetWidth + 'px'; 
+    element.style.backgroundColor = '#f8f9fa'; 
+    element.style.padding = '40px'; 
+
+    // 2. Add a tiny delay to ensure Chart.js animations are 100% finished
+    setTimeout(() => {
+        html2canvas(element, { 
+            scale: 2.5, // 🔥 Upped to 3 for ultra-crisp text and charts
+            useCORS: true, 
+            logging: false, 
+            width: targetWidth, 
+            windowWidth: targetWidth 
+        }).then((canvas) => {
+            
+          // 3. Restore the live UI instantly
+          buttons.style.display = 'flex'; 
+          element.style.width = originalWidth; 
+          element.style.maxWidth = originalMaxWidth; 
+          element.style.backgroundColor = originalBg; 
+          element.style.padding = originalPadding;
+
+          const h100Cards = element.querySelectorAll('.h-100');
+          h100Cards.forEach(card => card.style.minHeight = '100%');
+          
+          // 🔥 Use PNG instead of JPEG to prevent blurry artifacting!
+          const imgData = canvas.toDataURL('image/png'); 
+          
+          // 4. Build the PDF
+          const pdf = new jsPDF('landscape', 'in', 'letter'); 
+          const pdfWidth = pdf.internal.pageSize.getWidth(); 
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          
+          const imgProps = pdf.getImageProperties(imgData); 
+          const margin = 0.3; 
+          const maxImgWidth = pdfWidth - (margin * 2); 
+          const maxImgHeight = pdfHeight - (margin * 2);
+          
+          const ratio = Math.min(maxImgWidth / imgProps.width, maxImgHeight / imgProps.height); 
+          const finalWidth = imgProps.width * ratio; 
+          const finalHeight = imgProps.height * ratio;
+          
+          // Add the sharp PNG to the PDF and download
+          pdf.addImage(imgData, 'PNG', (pdfWidth - finalWidth) / 2, margin, finalWidth, finalHeight); 
+          pdf.save(`ICIS_Analytics_Report_${new Date().toISOString().split('T')[0]}.pdf`);
+          
+          showAlert("High-Resolution PDF downloaded successfully!", "success");
+          
+        }).catch(err => {
+          // Restore UI if something breaks
+          buttons.style.display = 'flex'; 
+          element.style.width = originalWidth; 
+          element.style.maxWidth = originalMaxWidth; 
+          element.style.backgroundColor = originalBg; 
+          element.style.padding = originalPadding;
+          showAlert("Failed to generate PDF.", "danger");
+          console.error(err);
+        });
+    }, 300); // 300ms pause
   };
 
 });
