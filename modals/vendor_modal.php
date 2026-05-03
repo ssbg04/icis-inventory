@@ -92,6 +92,56 @@
   </div>
 </div>
 
+<!-- ========================================== -->
+<!-- VIEW VENDOR MODAL (Read-Only for Employees) -->
+<!-- ========================================== -->
+<div class="modal fade" id="viewVendorModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light border-bottom-0">
+        <h5 class="modal-title fw-bold"><i class="bi bi-building text-info me-2"></i>Vendor Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        
+        <div class="mb-4 text-center">
+            <h4 id="view_vendor_name" class="fw-bold text-dark mb-1"></h4>
+            <span class="badge bg-info bg-opacity-10 text-info border border-info rounded-pill px-3 py-1">Authorized Supplier</span>
+        </div>
+
+        <div class="card border-0 bg-light">
+            <div class="card-body">
+                <div class="mb-3">
+                  <label class="text-muted small fw-bold text-uppercase">Contact Person</label>
+                  <div id="view_vendor_contact_person" class="text-dark fw-medium"><i class="bi bi-person me-2 text-muted"></i><span></span></div>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label class="text-muted small fw-bold text-uppercase">Phone</label>
+                    <div id="view_vendor_phone" class="text-dark fw-medium"><i class="bi bi-telephone me-2 text-muted"></i><span></span></div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="text-muted small fw-bold text-uppercase">Email</label>
+                    <div id="view_vendor_email" class="text-dark fw-medium"><i class="bi bi-envelope me-2 text-muted"></i><span></span></div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="text-muted small fw-bold text-uppercase">Physical Address</label>
+                  <div id="view_vendor_address" class="text-dark fw-medium"><i class="bi bi-geo-alt me-2 text-muted"></i><span></span></div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+      <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-secondary shadow-sm" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- VENDOR HISTORY MODAL -->
 <div class="modal fade" id="vendorHistoryModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-lg">

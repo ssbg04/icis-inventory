@@ -1,7 +1,7 @@
 <div id="vendorsContainer">
     <div class="d-flex justify-content-between align-items-center mb-4 header-actions">
         <h4 class="mb-0 fw-bold">Vendor Management</h4>
-        <button class="btn btn-primary shadow-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addVendorModal">
+        <button id="addVendorBtn" class="btn btn-primary shadow-sm rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addVendorModal">
         <i class="bi bi-plus-lg me-1"></i> Add Vendor
         </button>
     </div>

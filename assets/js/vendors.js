@@ -33,8 +33,16 @@ $(document).ready(function () {
     });
   };
 
-  // --- 2. Load Vendor Table ---
+  // --- 2. Load Vendor Table (Secured by Role) ---
   window.loadVendors = function() {
+    
+    // 🔥 Check role and hide the Add Vendor button if they are not an admin
+    if (currentUserRole !== 'admin') {
+        $("#addVendorBtn").hide();
+    } else {
+        $("#addVendorBtn").show();
+    }
+
     $.ajax({
       url: "includes/api/api.php?action=get_suppliers",
       type: "GET",
@@ -43,9 +51,30 @@ $(document).ready(function () {
         if (res.status === "success") {
           let rows = "";
           res.data.forEach(function (vendor) {
-            let deleteVendorBtn = (currentUserRole === 'admin')
-            ? `<button class="btn btn-sm btn-light text-danger me-2 delete-vendor-btn" data-id="${vendor.supplier_id}" title="Delete"><i class="bi bi-trash"></i></button>`
-            : '';
+            
+            // 🔥 ROLE CHECK: Admins get Edit/Delete. Employees get a "View" button.
+            let actionButtons = "";
+            
+            if (currentUserRole === 'admin') {
+                actionButtons = `
+                    <button class="btn btn-sm btn-light text-primary me-1 edit-vendor-btn" 
+                        data-id="${vendor.supplier_id}" data-name="${vendor.name}" data-person="${vendor.contact_person || ''}"
+                        data-phone="${vendor.phone || ''}" data-email="${vendor.email || ''}" data-address="${vendor.address || ''}" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light text-danger me-2 delete-vendor-btn" data-id="${vendor.supplier_id}" title="Delete">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
+            } else {
+                actionButtons = `
+                    <button class="btn btn-sm btn-light text-primary me-2 view-vendor-btn" 
+                        data-name="${vendor.name}" data-person="${vendor.contact_person || 'N/A'}"
+                        data-phone="${vendor.phone || 'N/A'}" data-email="${vendor.email || 'N/A'}" data-address="${vendor.address || 'N/A'}" title="View Details">
+                        <i class="bi bi-eye"></i> View
+                    </button>
+                `;
+            }
 
             rows += `<tr>
               <td class="ps-4">
@@ -57,12 +86,7 @@ $(document).ready(function () {
                   <div class="text-muted small"><i class="bi bi-telephone me-1"></i>${vendor.phone || "N/A"}</div>
               </td>
               <td class="pe-4 text-end">
-                <button class="btn btn-sm btn-light text-primary me-1 edit-vendor-btn" 
-                    data-id="${vendor.supplier_id}" data-name="${vendor.name}" data-person="${vendor.contact_person || ''}"
-                    data-phone="${vendor.phone || ''}" data-email="${vendor.email || ''}" data-address="${vendor.address || ''}" title="Edit">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                ${deleteVendorBtn}
+                ${actionButtons}
                 <button class="btn btn-sm btn-outline-primary rounded-pill view-history-btn" data-id="${vendor.supplier_id}" data-name="${vendor.name}">
                   <i class="bi bi-clock-history"></i> History
                 </button>
@@ -199,6 +223,21 @@ $(document).ready(function () {
         }
       }
     });
+  });
+
+  // --- 5. View Vendor Details Modal (For Employees) ---
+  $(document).on("click", ".view-vendor-btn", function () {
+    let btn = $(this);
+    
+    // Inject the data into the Read-Only text spans
+    $("#view_vendor_name").text(btn.data("name"));
+    $("#view_vendor_contact_person span").text(btn.data("person"));
+    $("#view_vendor_phone span").text(btn.data("phone"));
+    $("#view_vendor_email span").text(btn.data("email"));
+    $("#view_vendor_address span").text(btn.data("address"));
+    
+    // Show the modal
+    $("#viewVendorModal").modal("show");
   });
 
 });
