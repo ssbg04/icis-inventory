@@ -24,24 +24,77 @@ let spendChartInstance = null;
 // ==========================================
 // 2. GLOBAL HELPER FUNCTIONS
 // ==========================================
-function showAlert(msg, type) {
-  // Create a unique ID for this alert so the timer doesn't accidentally hide a newer alert
-  let alertId = 'alert-' + Date.now();
+function showAlert(msg, type = 'info') {
+  const toastId = 'toast-' + Date.now();
+  const iconMap = {
+    'success': 'bi-check-circle-fill',
+    'danger': 'bi-exclamation-octagon-fill',
+    'warning': 'bi-exclamation-triangle-fill',
+    'info': 'bi-info-circle-fill'
+  };
+  const icon = iconMap[type] || 'bi-bell-fill';
+  const title = type.charAt(0).toUpperCase() + type.slice(1);
 
-  $("#alertBox").html(`
-    <div id="${alertId}" class="alert alert-${type} alert-dismissible fade show border-0 shadow-sm" style="z-index: 1050;">
-      ${msg}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  const toastHtml = `
+    <div id="${toastId}" class="toast toast-custom toast-${type} fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+      <div class="toast-header toast-header-custom">
+        <i class="bi ${icon} text-${type} me-2"></i>
+        <strong class="me-auto text-${type}">${title}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body toast-body-custom">
+        ${msg}
+      </div>
     </div>
-  `);
+  `;
 
-  // Auto-hide the alert after 4 seconds (4000 milliseconds)
-  setTimeout(function() {
-    $("#" + alertId).fadeOut(400, function() {
-      $(this).remove(); // Completely removes it from the screen
-    });
-  }, 4000);
+  $("#toastContainer").append(toastHtml);
+  
+  const toastElement = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastElement, { autohide: false });
+  toast.show();
+
+  toastElement.addEventListener('hidden.bs.toast', function () {
+    $(this).remove();
+  });
 }
+
+// Global function for complex notifications (with buttons/links)
+function showNotification(options) {
+  const toastId = 'notif-' + Date.now();
+  const type = options.type || 'info';
+  const icon = options.icon || 'bi-bell-fill';
+  
+  const toastHtml = `
+    <div id="${toastId}" class="toast toast-custom toast-${type} fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false" style="min-width: 300px;">
+      <div class="toast-header toast-header-custom">
+        <i class="bi ${icon} text-${type} me-2"></i>
+        <strong class="me-auto text-${type}">${options.title || 'Notification'}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body toast-body-custom">
+        <div class="mb-2">${options.message}</div>
+        ${options.action ? `<button class="btn btn-sm btn-${type} rounded-pill px-3 mt-2" onclick="${options.action.callback}">${options.action.label}</button>` : ''}
+      </div>
+    </div>
+  `;
+
+  $("#toastContainer").append(toastHtml);
+  
+  const toastElement = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastElement, { autohide: false });
+  toast.show();
+
+  toastElement.addEventListener('hidden.bs.toast', function () {
+    $(this).remove();
+  });
+}
+
+// Dedicated function for opening low stock modal
+window.viewLowStock = function() {
+  $("#lowStockModal").modal("show");
+};
+
 
 // ==========================================
 // 3. SPA LAZY LOADING ROUTER

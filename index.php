@@ -36,6 +36,7 @@
 
     <div class="container" id="dashboardSection">
       
+      <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2000;"></div>
       <div id="alertBox"></div>
 
       <?php include 'partials/navbar.php'; ?>

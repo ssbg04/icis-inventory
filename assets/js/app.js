@@ -434,7 +434,22 @@ $(document).ready(function () {
         </tr>`;
       });
       $("#lowStockTableBody").html(rows);
-      setTimeout(() => { $("#lowStockModal").modal("show"); }, 500);
+      // Replace modal with notification
+setTimeout(() => {
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        new Notification('Low Stock Alert!', {
+          body: 'Items below reorder level detected',
+          tag: 'lowStockAlert'
+        });
+      }
+    });
+  } else {
+    // Fallback to alert if notifications not supported
+    alert('Low Stock Alert! Items below reorder level detected');
+  }
+}, 500);
     }
   }
 

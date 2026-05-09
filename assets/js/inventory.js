@@ -245,7 +245,6 @@ $(document).ready(function () {
     });
   });
 
-  // --- 5. Low Stock Alerts ---
   function checkAndShowLowStockAlert(inventoryData) {
     let lowStockItems = inventoryData.filter(item => parseInt(item.quantity) <= parseInt(item.reorder_level));
     
@@ -260,9 +259,22 @@ $(document).ready(function () {
         </tr>`;
       });
       $("#lowStockTableBody").html(rows);
-      setTimeout(() => { $("#lowStockModal").modal("show"); }, 500);
+
+      // Show premium notification instead of modal
+      showNotification({
+        title: 'Low Stock Alert!',
+        message: `${lowStockItems.length} items are below reorder level.`,
+        type: 'danger',
+        icon: 'bi-exclamation-triangle-fill',
+        action: {
+          label: 'View & Restock',
+          callback: 'viewLowStock()'
+        }
+      });
     }
   }
+
+
 
   $(document).on("click", "#manualRestockBtn", function() {
     $("#lowStockModal").modal("hide");

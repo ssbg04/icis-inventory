@@ -154,7 +154,7 @@
       </div>
       <div class="modal-body px-4 py-4">
         
-        <div class="table-responsive border rounded-3 overflow-hidden">
+        <div class="table-responsive border rounded-3 overflow-auto">
           <table class="table table-hover table-custom mb-0">
             <thead class="bg-light">
               <tr>
