@@ -10,6 +10,11 @@
         <h3 class="fw-bold text-dark">Welcome Back</h3>
         <p class="text-muted small">Please sign in to ICIS Inventory
             <!-- <?php echo password_hash("john123", PASSWORD_DEFAULT)?> -->
+             <?php
+            echo date_default_timezone_get();
+            echo "<br>";
+            echo date("Y-m-d H:i:s");
+            ?>
 
         </p>
         </div>
