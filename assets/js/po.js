@@ -116,13 +116,78 @@ $(document).ready(function () {
   }
 
   function renderPOPagination(totalPages) {
-    let paginationHtml = `<li class="page-item ${poCurrentPage === 1 ? "disabled" : ""}"><a class="page-link" href="#" onclick="changePOPage(${poCurrentPage - 1}); return false;">Previous</a></li>`;
-    for (let i = 1; i <= totalPages; i++) {
-      paginationHtml += `<li class="page-item ${poCurrentPage === i ? "active" : ""}"><a class="page-link" href="#" onclick="changePOPage(${i}); return false;">${i}</a></li>`;
+    let paginationHtml = '';
+
+    // Previous Button
+    paginationHtml += `
+        <li class="page-item ${poCurrentPage === 1 ? "disabled" : ""}">
+            <a class="page-link" href="#" onclick="changePOPage(${poCurrentPage - 1}); return false;">
+                Previous
+            </a>
+        </li>
+    `;
+
+    let startPage = Math.max(1, poCurrentPage - 2);
+    let endPage = Math.min(totalPages, poCurrentPage + 2);
+
+    // Always show first page
+    if (startPage > 1) {
+        paginationHtml += `
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="changePOPage(1); return false;">1</a>
+            </li>
+        `;
+
+        if (startPage > 2) {
+            paginationHtml += `
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            `;
+        }
     }
-    paginationHtml += `<li class="page-item ${poCurrentPage === totalPages ? "disabled" : ""}"><a class="page-link" href="#" onclick="changePOPage(${poCurrentPage + 1}); return false;">Next</a></li>`;
+
+    // Middle Pages
+    for (let i = startPage; i <= endPage; i++) {
+        paginationHtml += `
+            <li class="page-item ${poCurrentPage === i ? "active" : ""}">
+                <a class="page-link" href="#" onclick="changePOPage(${i}); return false;">
+                    ${i}
+                </a>
+            </li>
+        `;
+    }
+
+    // Always show last page
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            paginationHtml += `
+                <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                </li>
+            `;
+        }
+
+        paginationHtml += `
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="changePOPage(${totalPages}); return false;">
+                    ${totalPages}
+                </a>
+            </li>
+        `;
+    }
+
+    // Next Button
+    paginationHtml += `
+        <li class="page-item ${poCurrentPage === totalPages ? "disabled" : ""}">
+            <a class="page-link" href="#" onclick="changePOPage(${poCurrentPage + 1}); return false;">
+                Next
+            </a>
+        </li>
+    `;
+
     $("#poPaginationControls").html(paginationHtml);
-  }
+}
 
   window.changePOPage = function(newPage) {
     poCurrentPage = newPage;
