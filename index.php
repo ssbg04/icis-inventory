@@ -24,6 +24,7 @@
   <body>
 
     <?php 
+    date_default_timezone_set('Asia/Manila');
     
     // header 
     include_once 'includes/header.php'; 

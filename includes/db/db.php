@@ -16,6 +16,8 @@
 
 // require_once __DIR__ . "/../env_loader.php";
 // loadEnv(__DIR__ . "/../../.env");
+
+date_default_timezone_set('Asia/Manila');
     
 $host = getenv("DB_HOST");
 $port = getenv("DB_PORT");
