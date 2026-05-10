@@ -117,12 +117,77 @@ $(document).ready(function () {
   }
 
   function renderInventoryPagination(totalPages) {
-    let paginationHtml = `<li class="page-item ${inventoryCurrentPage === 1 ? "disabled" : ""}"><a class="page-link" href="#" onclick="changeInventoryPage(${inventoryCurrentPage - 1}); return false;">Previous</a></li>`;
-    for (let i = 1; i <= totalPages; i++) {
-      paginationHtml += `<li class="page-item ${inventoryCurrentPage === i ? "active" : ""}"><a class="page-link" href="#" onclick="changeInventoryPage(${i}); return false;">${i}</a></li>`;
-    }
-    paginationHtml += `<li class="page-item ${inventoryCurrentPage === totalPages ? "disabled" : ""}"><a class="page-link" href="#" onclick="changeInventoryPage(${inventoryCurrentPage + 1}); return false;">Next</a></li>`;
-    $("#inventoryPaginationControls").html(paginationHtml);
+      let paginationHtml = '';
+
+      // Previous Button
+      paginationHtml += `
+          <li class="page-item ${inventoryCurrentPage === 1 ? "disabled" : ""}">
+              <a class="page-link" href="#" onclick="changeInventoryPage(${inventoryCurrentPage - 1}); return false;">
+                  Previous
+              </a>
+          </li>
+      `;
+
+      let startPage = Math.max(1, inventoryCurrentPage - 2);
+      let endPage = Math.min(totalPages, inventoryCurrentPage + 2);
+
+      // First Page
+      if (startPage > 1) {
+          paginationHtml += `
+              <li class="page-item">
+                  <a class="page-link" href="#" onclick="changeInventoryPage(1); return false;">1</a>
+              </li>
+          `;
+
+          if (startPage > 2) {
+              paginationHtml += `
+                  <li class="page-item disabled">
+                      <span class="page-link">...</span>
+                  </li>
+              `;
+          }
+      }
+
+      // Middle Pages
+      for (let i = startPage; i <= endPage; i++) {
+          paginationHtml += `
+              <li class="page-item ${inventoryCurrentPage === i ? "active" : ""}">
+                  <a class="page-link" href="#" onclick="changeInventoryPage(${i}); return false;">
+                      ${i}
+                  </a>
+              </li>
+          `;
+      }
+
+      // Last Page
+      if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+              paginationHtml += `
+                  <li class="page-item disabled">
+                      <span class="page-link">...</span>
+                  </li>
+              `;
+          }
+
+          paginationHtml += `
+              <li class="page-item">
+                  <a class="page-link" href="#" onclick="changeInventoryPage(${totalPages}); return false;">
+                      ${totalPages}
+                  </a>
+              </li>
+          `;
+      }
+
+      // Next Button
+      paginationHtml += `
+          <li class="page-item ${inventoryCurrentPage === totalPages ? "disabled" : ""}">
+              <a class="page-link" href="#" onclick="changeInventoryPage(${inventoryCurrentPage + 1}); return false;">
+                  Next
+              </a>
+          </li>
+      `;
+
+      $("#inventoryPaginationControls").html(paginationHtml);
   }
 
   window.changeInventoryPage = function(newPage) {

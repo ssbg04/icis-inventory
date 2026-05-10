@@ -105,12 +105,77 @@ $(document).ready(function () {
   }
 
   function renderIssuedPagination(totalPages) {
-    let html = `<li class="page-item ${issuedCurrentPage === 1 ? "disabled" : ""}"><a class="page-link" href="#" onclick="changeIssuedPage(${issuedCurrentPage - 1}); return false;">Previous</a></li>`;
-    for (let i = 1; i <= totalPages; i++) {
-      html += `<li class="page-item ${issuedCurrentPage === i ? "active" : ""}"><a class="page-link" href="#" onclick="changeIssuedPage(${i}); return false;">${i}</a></li>`;
-    }
-    html += `<li class="page-item ${issuedCurrentPage === totalPages ? "disabled" : ""}"><a class="page-link" href="#" onclick="changeIssuedPage(${issuedCurrentPage + 1}); return false;">Next</a></li>`;
-    $("#issuedPaginationControls").html(html);
+      let html = '';
+
+      // Previous Button
+      html += `
+          <li class="page-item ${issuedCurrentPage === 1 ? "disabled" : ""}">
+              <a class="page-link" href="#" onclick="changeIssuedPage(${issuedCurrentPage - 1}); return false;">
+                  Previous
+              </a>
+          </li>
+      `;
+
+      let startPage = Math.max(1, issuedCurrentPage - 2);
+      let endPage = Math.min(totalPages, issuedCurrentPage + 2);
+
+      // First Page
+      if (startPage > 1) {
+          html += `
+              <li class="page-item">
+                  <a class="page-link" href="#" onclick="changeIssuedPage(1); return false;">1</a>
+              </li>
+          `;
+
+          if (startPage > 2) {
+              html += `
+                  <li class="page-item disabled">
+                      <span class="page-link">...</span>
+                  </li>
+              `;
+          }
+      }
+
+      // Middle Pages
+      for (let i = startPage; i <= endPage; i++) {
+          html += `
+              <li class="page-item ${issuedCurrentPage === i ? "active" : ""}">
+                  <a class="page-link" href="#" onclick="changeIssuedPage(${i}); return false;">
+                      ${i}
+                  </a>
+              </li>
+          `;
+      }
+
+      // Last Page
+      if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+              html += `
+                  <li class="page-item disabled">
+                      <span class="page-link">...</span>
+                  </li>
+              `;
+          }
+
+          html += `
+              <li class="page-item">
+                  <a class="page-link" href="#" onclick="changeIssuedPage(${totalPages}); return false;">
+                      ${totalPages}
+                  </a>
+              </li>
+          `;
+      }
+
+      // Next Button
+      html += `
+          <li class="page-item ${issuedCurrentPage === totalPages ? "disabled" : ""}">
+              <a class="page-link" href="#" onclick="changeIssuedPage(${issuedCurrentPage + 1}); return false;">
+                  Next
+              </a>
+          </li>
+      `;
+
+      $("#issuedPaginationControls").html(html);
   }
 
   window.changeIssuedPage = function(newPage) {
