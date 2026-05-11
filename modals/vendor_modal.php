@@ -14,25 +14,28 @@
                 <label for="addVendorName">Company Name</label>
               </div>
               <div class="form-floating mb-3">
-                <input type="text" name="contact_person" class="form-control" placeholder="Contact Person" />
+                <input type="text" name="contact_person" class="form-control" placeholder="Contact Person" required/>
                 <label>Contact Person</label>
               </div>
               <div class="row g-2 mb-3">
                 <div class="col-6">
                   <div class="form-floating">
-                    <input type="text" name="phone" class="form-control" placeholder="Phone" />
+                    <input type="tel" name="phone" id="phone" class="form-control" maxlength="11" placeholder="09XXXXXXXXX" inputmode="tel" required />
                     <label>Phone Number</label>
+                    <div class="invalid-feedback">
+                      Enter valid phone number (09XXXXXXXXX)
+                    </div>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="form-floating">
-                    <input type="email" name="email" class="form-control" placeholder="Email" />
+                    <input type="email" name="email" class="form-control" placeholder="Email" required />
                     <label>Email Address</label>
                   </div>
                 </div>
               </div>
               <div class="form-floating">
-                <textarea name="address" class="form-control" style="height: 80px" placeholder="Physical Address"></textarea>
+                <textarea name="address" class="form-control" style="height: 80px" placeholder="Physical Address" required></textarea>
                 <label>Physical Address</label>
               </div>
             </div>
@@ -61,25 +64,28 @@
             <label>Company Name</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" name="contact_person" id="edit_vendor_contact_person" class="form-control" placeholder="Contact Person" />
+            <input type="text" name="contact_person" id="edit_vendor_contact_person" class="form-control" placeholder="Contact Person" required/>
             <label>Contact Person</label>
           </div>
           <div class="row g-2 mb-3">
             <div class="col-6">
               <div class="form-floating">
-                <input type="text" name="phone" id="edit_vendor_phone" class="form-control" placeholder="Phone" />
+                <input type="tel" name="phone" id="edit_vendor_phone" maxlength="11" class="form-control" placeholder="09XXXXXXXXX" inputmode="tel" required/>
                 <label>Phone Number</label>
+                <div class="invalid-feedback">
+                      Enter valid phone number (09XXXXXXXXX)
+                    </div>
               </div>
             </div>
             <div class="col-6">
               <div class="form-floating">
-                <input type="email" name="email" id="edit_vendor_email" class="form-control" placeholder="Email" />
+                <input type="email" name="email" id="edit_vendor_email" class="form-control" placeholder="Email" required/>
                 <label>Email Address</label>
               </div>
             </div>
           </div>
           <div class="form-floating">
-            <textarea name="address" id="edit_vendor_address" class="form-control" style="height: 80px" placeholder="Physical Address"></textarea>
+            <textarea name="address" id="edit_vendor_address" class="form-control" style="height: 80px" placeholder="Physical Address" required></textarea>
             <label>Physical Address</label>
           </div>
         </div>

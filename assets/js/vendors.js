@@ -1,4 +1,24 @@
 // ==========================================
+// VALIDATION FOR PHONE
+// ==========================================
+
+// ADD MODAL VALIDATION
+$(document).on("input", "#phone", function () {
+
+    // Remove non-numeric characters
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+});
+
+// EDIT MODAL VALIDATION
+$(document).on("input", "#edit_vendor_phone", function () {
+
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+});
+
+
+// ==========================================
 // VENDORS & SUPPLIERS LOGIC (vendors.js)
 // ==========================================
 $(document).ready(function () {
@@ -113,8 +133,30 @@ $(document).ready(function () {
 
   $(document).on("submit", "#addVendorForm", function (e) {
     e.preventDefault();
+    let phone = $("#phone").val().trim();
+    let regex = /^09\d{9}$/;
     let submitBtn = $(this).find('button[type="submit"]');
     let originalText = submitBtn.html();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validate phone
+    |--------------------------------------------------------------------------
+    */
+    if (!regex.test(phone)) {
+
+        $("#phone").addClass("is-invalid");
+
+        showAlert(
+            "Phone number must be 11 digits and start with 09.",
+            "danger"
+        );
+
+        return;
+    }
+
+    $("#phone").removeClass("is-invalid");
+
     submitBtn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
 
     $.ajax({
@@ -127,6 +169,7 @@ $(document).ready(function () {
         if (res.status === "success") {
           $("#addVendorModal").modal("hide");
           $("#addVendorForm")[0].reset();
+          $("#phone").removeClass("is-invalid");
           showAlert(res.message, "success");
           if (window.currentTab === "vendors") loadVendors();
           loadSuppliers(); // Refresh global dropdowns
@@ -139,8 +182,25 @@ $(document).ready(function () {
 
   $(document).on("submit", "#editVendorForm", function (e) {
     e.preventDefault();
+    let phone = $("#edit_vendor_phone").val().trim();
+    let regex = /^09\d{9}$/;
     let submitBtn = $(this).find('button[type="submit"]');
     let originalText = submitBtn.html();
+
+    if (!regex.test(phone)) {
+
+        $("#edit_vendor_phone").addClass("is-invalid");
+
+        showAlert(
+            "Phone number must be 11 digits and start with 09.",
+            "danger"
+        );
+
+        return;
+    }
+
+    $("#edit_vendor_phone").removeClass("is-invalid");
+    
     submitBtn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm"></span> Updating...');
 
     $.ajax({
